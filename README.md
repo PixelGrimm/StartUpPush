@@ -157,6 +157,49 @@ Users earn points for:
 
 ## 🚀 Deployment
 
+### Deploy to Railway (Recommended)
+
+1. **Push to GitHub**: Ensure your code is in a GitHub repository
+
+2. **Connect to Railway**:
+   - Go to [railway.app](https://railway.app)
+   - Sign in with GitHub
+   - Click "New Project" → "Deploy from GitHub repo"
+   - Select your `startuppush` repository
+
+3. **Set up Database**:
+   - In Railway dashboard, click "New" → "Database" → "PostgreSQL"
+   - Railway will automatically provide a `DATABASE_URL` environment variable
+
+4. **Configure Environment Variables**:
+   - In your project settings, add these environment variables:
+   ```env
+   DATABASE_URL="your-railway-postgres-url"
+   NEXTAUTH_URL="https://your-railway-domain.railway.app"
+   NEXTAUTH_SECRET="your-production-secret"
+   GOOGLE_CLIENT_ID="your-google-client-id"
+   GOOGLE_CLIENT_SECRET="your-google-client-secret"
+   STRIPE_PUBLISHABLE_KEY="your-stripe-key"
+   STRIPE_SECRET_KEY="your-stripe-secret"
+   EMAIL_SERVER_HOST="smtp.gmail.com"
+   EMAIL_SERVER_PORT=587
+   EMAIL_SERVER_USER="your-email@gmail.com"
+   EMAIL_SERVER_PASSWORD="your-app-password"
+   EMAIL_FROM="noreply@yourdomain.com"
+   ```
+
+5. **Deploy**:
+   - Railway will automatically build and deploy your app
+   - The first build may take 5-10 minutes
+   - Your app will be available at `https://your-project-name.railway.app`
+
+6. **Database Setup**:
+   ```bash
+   # Railway will automatically run these commands during build
+   npx prisma generate
+   npx prisma db push
+   ```
+
 ### Deploy to Vercel
 
 1. **Push to GitHub**: Ensure your code is in a GitHub repository
