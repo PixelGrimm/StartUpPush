@@ -9,7 +9,7 @@ npx prisma generate
 
 # Push database schema (this will create tables if they don't exist)
 echo "🗄️ Setting up database schema..."
-npx prisma db push
+npx prisma db push --accept-data-loss
 
 # Build the Next.js application
 echo "🏗️ Building Next.js application..."
