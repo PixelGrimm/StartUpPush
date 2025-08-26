@@ -32,6 +32,8 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
   })
   const [projectUpdates, setProjectUpdates] = useState<any[]>([])
   const [loadingUpdates, setLoadingUpdates] = useState(true)
+  const [similarProjects, setSimilarProjects] = useState<any[]>([])
+  const [loadingSimilar, setLoadingSimilar] = useState(true)
   const [errorModal, setErrorModal] = useState<{ isOpen: boolean; message: string; title: string }>({
     isOpen: false,
     message: '',
@@ -111,8 +113,23 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
       }
     }
 
+    const fetchSimilarProjects = async () => {
+      try {
+        const response = await fetch(`/api/products?category=${product.category}&exclude=${product.id}&limit=4`)
+        if (response.ok) {
+          const data = await response.json()
+          setSimilarProjects(data.products || [])
+        }
+      } catch (error) {
+        console.error('Error fetching similar projects:', error)
+      } finally {
+        setLoadingSimilar(false)
+      }
+    }
+
     fetchBoostStatus()
     fetchProjectUpdates()
+    fetchSimilarProjects()
   }, [product.id])
 
   const handleVote = async (value: number) => {
@@ -551,9 +568,48 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
               )}
             </div>
           )}
-        </div>
+                </div>
 
-
+        {/* You may also like - Real projects */}
+        {similarProjects.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold text-foreground mb-4">You may also like</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {similarProjects.map((similarProject) => (
+                <Link
+                  key={similarProject.id}
+                  href={`/p/${similarProject.name.toLowerCase().replace(/\s+/g, '-')}`}
+                  className="bg-card border border-border rounded-lg p-4 hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-start space-x-3">
+                    {similarProject.logo ? (
+                      <img
+                        src={similarProject.logo}
+                        alt={similarProject.name}
+                        className="w-12 h-12 rounded-lg object-cover"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
+                        <span className="text-muted-foreground font-semibold text-sm">
+                          {similarProject.name.charAt(0)}
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-foreground">{similarProject.name}</h3>
+                      <p className="text-muted-foreground text-sm mb-2">{similarProject.tagline}</p>
+                      <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                        <span>🔥 {similarProject._count.votes}</span>
+                        <span>👍 {similarProject.votes.filter(v => v.value === 1).length}</span>
+                        {similarProject.mrr && <span>${similarProject.mrr} MRR</span>}
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Error/Success Modal */}

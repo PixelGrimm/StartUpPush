@@ -8,6 +8,9 @@ export async function GET(request: NextRequest) {
     const session = await getServerSession(authOptions)
     const { searchParams } = new URL(request.url)
     const featuredOnly = searchParams.get('featured') === 'true'
+    const category = searchParams.get('category')
+    const exclude = searchParams.get('exclude')
+    const limit = searchParams.get('limit')
     
     // Get user votes if authenticated
     let userVotes: Record<string, number> = {}
@@ -27,9 +30,20 @@ export async function GET(request: NextRequest) {
       }, {} as Record<string, number>)
     }
 
+    // Build where clause for filtering
+    const whereClause: any = { isActive: true }
+    
+    if (category) {
+      whereClause.category = category
+    }
+    
+    if (exclude) {
+      whereClause.id = { not: exclude }
+    }
+
     // Fetch all products with votes and user data
     const products = await prisma.product.findMany({
-      where: { isActive: true },
+      where: whereClause,
       include: {
         user: {
           select: {
@@ -135,6 +149,17 @@ export async function GET(request: NextRequest) {
       const featuredProducts = getFeaturedProducts()
       return NextResponse.json({
         products: featuredProducts.map(product => ({
+          ...product,
+          userVote: userVotes[product.id] || null
+        }))
+      })
+    }
+
+    // If requesting similar projects (category + exclude), return them
+    if (category && exclude) {
+      const similarProducts = sortedProducts.slice(0, limit ? parseInt(limit) : 4)
+      return NextResponse.json({
+        products: similarProducts.map(product => ({
           ...product,
           userVote: userVotes[product.id] || null
         }))
