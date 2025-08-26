@@ -7,12 +7,9 @@ echo "🚀 Starting Railway build for StartUpPush..."
 echo "📦 Generating Prisma client..."
 npx prisma generate
 
-# Push database schema (this will create tables if they don't exist)
-echo "🗄️ Setting up database schema..."
-npx prisma db push --accept-data-loss
-
 # Build the Next.js application
 echo "🏗️ Building Next.js application..."
 npm run build
 
 echo "✅ Railway build completed successfully!"
+echo "📝 Database setup will happen during deployment..."
