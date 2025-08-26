@@ -20,7 +20,8 @@ import {
   CheckCircle,
   XCircle,
   Calendar,
-  Filter
+  Filter,
+  Trash2
 } from 'lucide-react'
 
 interface AdminStats {
@@ -191,6 +192,27 @@ export default function AdminPage() {
       }
     } catch (error) {
       console.error('Error updating comment:', error)
+    }
+  }
+
+  const handleCleanupComments = async () => {
+    try {
+      const response = await fetch('/api/admin/cleanup-comments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      })
+
+      if (response.ok) {
+        const result = await response.json()
+        alert(`Successfully deleted ${result.deleted} test comments!`)
+        // Refresh data
+        fetchAdminData()
+      } else {
+        alert('Failed to cleanup comments')
+      }
+    } catch (error) {
+      console.error('Error cleaning up comments:', error)
+      alert('Error cleaning up comments')
     }
   }
 
@@ -454,7 +476,17 @@ export default function AdminPage() {
           <TabsContent value="comments" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>All Comments</CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle>All Comments</CardTitle>
+                  <Button 
+                    variant="destructive" 
+                    size="sm"
+                    onClick={handleCleanupComments}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Cleanup Test Comments
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
