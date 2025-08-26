@@ -423,7 +423,23 @@ export default function HomePage() {
       {/* Main Content */}
       <div className="px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-8">
-          {/* Product Rankings */}
+          {/* Left Sidebar */}
+          <aside className="w-80 space-y-8">
+            <ProjectRankings
+              todaysTop={filteredProducts.todaysTop}
+              todaysPromoted={filteredProducts.todaysPromoted}
+              yesterdaysTop={filteredProducts.yesterdaysTop}
+              yesterdaysPromoted={filteredProducts.yesterdaysPromoted}
+              weeklyTop={filteredProducts.weeklyTop}
+              weeklyPromoted={filteredProducts.weeklyPromoted}
+              monthlyTop={filteredProducts.monthlyTop}
+              monthlyPromoted={filteredProducts.monthlyPromoted}
+              userVotes={userVotes}
+              onVote={handleVote}
+            />
+          </aside>
+
+          {/* Central Content Area */}
           <main className="flex-1">
             {/* Filter Tabs */}
             <FilterTabs 
@@ -453,25 +469,22 @@ export default function HomePage() {
               </div>
             )}
             
-            <ProjectRankings
-              todaysTop={filteredProducts.todaysTop}
-              todaysPromoted={filteredProducts.todaysPromoted}
-              yesterdaysTop={filteredProducts.yesterdaysTop}
-              yesterdaysPromoted={filteredProducts.yesterdaysPromoted}
-              weeklyTop={filteredProducts.weeklyTop}
-              weeklyPromoted={filteredProducts.weeklyPromoted}
-              monthlyTop={filteredProducts.monthlyTop}
-              monthlyPromoted={filteredProducts.monthlyPromoted}
-              userVotes={userVotes}
-              onVote={handleVote}
-            />
+            {/* Central content area - shows filtered results */}
+            <div className="space-y-6">
+              {/* This will show the filtered content based on the active tab */}
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">No projects found for this period.</p>
+              </div>
+            </div>
           </main>
 
-          {/* Sidebar */}
-          <Sidebar
-            featuredProducts={featuredProducts}
-            latestPosts={latestPosts}
-          />
+          {/* Right Sidebar */}
+          <aside className="w-80">
+            <Sidebar
+              featuredProducts={featuredProducts}
+              latestPosts={latestPosts}
+            />
+          </aside>
         </div>
       </div>
 
