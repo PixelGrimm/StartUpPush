@@ -10,6 +10,10 @@ import { NextAuthOptions } from "next-auth"
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
   console.warn('⚠️ Google OAuth credentials not configured. Google login will not work.')
   console.warn('   Please set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in Railway environment variables.')
+} else {
+  console.log('✅ Google OAuth credentials found:')
+  console.log('   Client ID:', process.env.GOOGLE_CLIENT_ID.substring(0, 20) + '...')
+  console.log('   Client Secret:', process.env.GOOGLE_CLIENT_SECRET.substring(0, 10) + '...')
 }
 
 if (!process.env.NEXTAUTH_SECRET) {
@@ -20,6 +24,8 @@ if (!process.env.NEXTAUTH_SECRET) {
 if (!process.env.NEXTAUTH_URL) {
   console.warn('⚠️ NEXTAUTH_URL not configured. Using fallback URL.')
   console.warn('   Please set NEXTAUTH_URL=https://startuppush.pro in Railway environment variables.')
+} else {
+  console.log('✅ NEXTAUTH_URL configured:', process.env.NEXTAUTH_URL)
 }
 
 if (!process.env.EMAIL_SERVER_USER || !process.env.EMAIL_SERVER_PASSWORD) {
