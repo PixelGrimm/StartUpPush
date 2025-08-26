@@ -6,7 +6,7 @@ import { notFound } from 'next/navigation'
 import { formatNumber } from '@/lib/utils'
 import { ProductDetailClient } from './product-detail-client'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { authOptions } from '@/lib/auth'
 
 interface ProductPageProps {
   params: {
