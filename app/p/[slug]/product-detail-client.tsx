@@ -600,7 +600,7 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
                       <p className="text-muted-foreground text-sm mb-2">{similarProject.tagline}</p>
                       <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                         <span>🔥 {similarProject._count.votes}</span>
-                        <span>👍 {similarProject.votes.filter(v => v.value === 1).length}</span>
+                        <span>👍 {similarProject.votes.filter((v: any) => v.value === 1).length}</span>
                         {similarProject.mrr && <span>${similarProject.mrr} MRR</span>}
                       </div>
                     </div>
