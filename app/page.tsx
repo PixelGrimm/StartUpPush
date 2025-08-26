@@ -351,7 +351,7 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto py-8">
+      <div className="px-4 sm:px-6 lg:px-8 py-8">
         <div className="animate-pulse">
           <div className="h-8 bg-muted rounded w-1/3 mb-4"></div>
           <div className="h-4 bg-muted rounded w-1/2 mb-8"></div>
@@ -370,7 +370,7 @@ export default function HomePage() {
       
       {/* Hero Section */}
       <section className="py-16 bg-gradient-to-b from-background to-muted/20">
-        <div className="container mx-auto">
+        <div className="px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             {/* Top Banner */}
             <motion.div
@@ -421,7 +421,7 @@ export default function HomePage() {
       </section>
 
       {/* Main Content */}
-      <div className="container mx-auto py-8">
+      <div className="px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-8">
           {/* Product Rankings */}
           <main className="flex-1">
