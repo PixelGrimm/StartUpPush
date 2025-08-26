@@ -155,7 +155,7 @@ export function ProjectCard({ project, userVote, onVote, showPromoted = true }: 
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          productId: product.id,
+          productId: project.id,
           value: value,
         }),
       })
@@ -168,7 +168,7 @@ export function ProjectCard({ project, userVote, onVote, showPromoted = true }: 
 
         // Call parent callback if provided
         if (onVote) {
-          onVote(product.id, value)
+          onVote(project.id, value)
         }
 
         // Add a small delay to ensure database update is complete
