@@ -142,8 +142,11 @@ export default function AdminPage() {
       const commentsResponse = await fetch('/api/admin/comments')
       if (commentsResponse.ok) {
         const commentsData = await commentsResponse.json()
+        console.log('Admin page: Comments data received:', commentsData)
         setComments(commentsData.comments)
         setJailedComments(commentsData.comments.filter((c: Comment) => c.status === 'jailed'))
+      } else {
+        console.error('Admin page: Comments API failed:', commentsResponse.status)
       }
 
       // Fetch boost sales

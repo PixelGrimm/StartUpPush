@@ -12,6 +12,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    console.log('Admin comments API: Fetching all comments...')
+
     const comments = await prisma.comment.findMany({
       where: {
         // Show all comments regardless of status for admin
@@ -35,6 +37,9 @@ export async function GET(request: NextRequest) {
         createdAt: 'desc'
       }
     })
+
+    console.log(`Admin comments API: Found ${comments.length} comments`)
+    console.log('Comments:', comments.map(c => ({ id: c.id, content: c.content.substring(0, 50), status: c.status })))
 
     return NextResponse.json({ comments })
 
