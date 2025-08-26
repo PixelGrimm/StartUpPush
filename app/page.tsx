@@ -377,9 +377,10 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="inline-block bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-sm font-medium mb-6"
+              className="inline-flex items-center gap-2 text-sm font-medium mb-6"
             >
-              The community-driven platform for project discovery
+              <Rocket className="h-4 w-4" />
+              Join the community, launch today
             </motion.div>
             
             {/* Main Heading */}
@@ -389,8 +390,7 @@ export default function HomePage() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight"
             >
-              Turn your product into a{' '}
-              <span className="text-purple-600">success story</span>.
+              Get <span className="text-purple-600">instant visibility</span> for your project. Be discovered by <span className="text-purple-600">people who care</span> now.
             </motion.h1>
             
             {/* Subtext */}
@@ -400,7 +400,7 @@ export default function HomePage() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed"
             >
-              More than just a <span className="text-purple-600">launchpad</span>—StartUpPush is a community of <span className="text-blue-600">makers and innovators</span>. Discover, upvote, and support fresh ideas, while earning <strong>StartUpPush Points</strong> to boost the visibility of your own product.
+              Thousands of entrepreneurs have launched projects and gained customers. Get featured placement, high DR SEO backlinks, and community exposure.
             </motion.p>
             
             {/* CTA Button */}
@@ -412,7 +412,7 @@ export default function HomePage() {
               <Button size="lg" className="text-lg px-8 py-6 bg-black hover:bg-gray-800 text-white" asChild>
                 <Link href="/submit">
                   <Rocket className="mr-2 h-5 w-5" />
-                  Submit Your Project
+                  Launch Your Project Now
                 </Link>
               </Button>
             </motion.div>

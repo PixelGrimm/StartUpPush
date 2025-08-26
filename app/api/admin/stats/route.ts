@@ -56,8 +56,7 @@ export async function GET(request: NextRequest) {
           type: { in: ['boosted', 'max-boosted'] }
         },
         select: {
-          type: true,
-          amount: true
+          type: true
         }
       })
     ])

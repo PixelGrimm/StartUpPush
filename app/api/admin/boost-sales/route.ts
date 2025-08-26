@@ -33,14 +33,14 @@ export async function GET(request: NextRequest) {
         product: {
           select: {
             id: true,
-            name: true
-          }
-        },
-        user: {
-          select: {
-            id: true,
             name: true,
-            email: true
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true
+              }
+            }
           }
         }
       },
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
       amount: sale.type === 'boosted' ? 50 : 100,
       createdAt: sale.createdAt,
       product: sale.product,
-      user: sale.user
+      user: sale.product.user
     }))
 
     return NextResponse.json({ sales: salesWithAmount })
