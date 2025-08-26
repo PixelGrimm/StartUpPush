@@ -212,10 +212,10 @@ export function ProjectCard({ project, userVote, onVote, showPromoted = true }: 
         <div className="flex items-start space-x-4">
           {/* Logo */}
           <div className="flex-shrink-0">
-            {product.logo ? (
+            {project.logo ? (
               <Image
-                src={product.logo}
-                alt={product.name}
+                src={project.logo}
+                alt={project.name}
                 width={48}
                 height={48}
                 className="rounded-lg"
@@ -223,7 +223,7 @@ export function ProjectCard({ project, userVote, onVote, showPromoted = true }: 
             ) : (
               <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
                 <span className="text-muted-foreground font-semibold text-lg">
-                  {product.name.charAt(0)}
+                  {project.name.charAt(0)}
                 </span>
               </div>
             )}
@@ -234,9 +234,9 @@ export function ProjectCard({ project, userVote, onVote, showPromoted = true }: 
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <div className="flex items-center space-x-2 mb-1">
-                  <Link href={`/p/${product.name.toLowerCase().replace(/\s+/g, '-')}`}>
+                  <Link href={`/p/${project.name.toLowerCase().replace(/\s+/g, '-')}`}>
                     <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors cursor-pointer">
-                      {product.name}
+                      {project.name}
                     </h3>
                   </Link>
                   {boostStatus && (
@@ -245,18 +245,18 @@ export function ProjectCard({ project, userVote, onVote, showPromoted = true }: 
                       className="ml-2"
                     />
                   )}
-                  {product.isPromoted && showPromoted && !boostStatus && (
+                  {project.isPromoted && showPromoted && !boostStatus && (
                     <span className="promoted-badge">Promoted</span>
                   )}
-                  {product.mrr && (
+                  {project.mrr && (
                     <span className="mrr-badge">
-                      ${formatNumber(product.mrr)} MRR
+                      ${formatNumber(project.mrr)} MRR
                     </span>
                   )}
                 </div>
                 
                 <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
-                  {product.tagline}
+                  {project.tagline}
                 </p>
 
                 {/* Tags */}
@@ -325,16 +325,16 @@ export function ProjectCard({ project, userVote, onVote, showPromoted = true }: 
                     
                     <div className="flex items-center space-x-2">
                       <span className="text-sm text-muted-foreground">
-                        {product._count.comments} comments
+                        {project._count.comments} comments
                       </span>
                       
                       <BoostButton
-                        productId={product.id}
-                        productOwnerId={product.userId}
+                        projectId={project.id}
+                        projectOwnerId={project.userId}
                         className="text-xs"
                       />
                       
-                      <Link href={`/p/${product.name.toLowerCase().replace(/\s+/g, '-')}`}>
+                      <Link href={`/p/${project.name.toLowerCase().replace(/\s+/g, '-')}`}>
                         <Button variant="outline" size="sm" className="text-xs">
                           Visit
                         </Button>

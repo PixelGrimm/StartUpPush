@@ -24,6 +24,7 @@ interface Product {
   id: string
   name: string
   tagline: string
+  description: string
   logo?: string | null
   website: string
   category: string
@@ -31,6 +32,7 @@ interface Product {
   mrr?: number | null
   isPromoted: boolean
   createdAt: Date | string
+  userId: string
   points: number // StartUpPush points
   totalVoteCount?: number
   userVote?: number | null
@@ -41,6 +43,13 @@ interface Product {
   votes?: Array<{
     value: number
     userId: string
+  }>
+  promotions?: Array<{
+    id: string
+    type: string
+    startDate: string
+    endDate: string
+    isActive: boolean
   }>
 }
 
@@ -58,6 +67,7 @@ const dummyProducts: Product[] = [
     id: '1',
     name: 'NotionAI',
     tagline: 'AI-powered workspace for teams',
+    description: 'AI-powered workspace for teams',
     logo: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=64&h=64&fit=crop',
     website: 'https://notion.ai',
     category: 'Productivity',
@@ -65,6 +75,7 @@ const dummyProducts: Product[] = [
     mrr: 50000,
     isPromoted: true,
     createdAt: new Date(),
+    userId: 'user1',
     points: 2840,
     _count: { votes: 15 },
     votes: Array.from({ length: 15 }, (_, i) => ({ value: 1, userId: `user${i}` }))

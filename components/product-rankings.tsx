@@ -6,6 +6,7 @@ interface Project {
   id: string
   name: string
   tagline: string
+  description: string
   logo?: string | null
   website: string
   category: string
@@ -13,6 +14,7 @@ interface Project {
   mrr?: number | null
   isPromoted: boolean
   createdAt: Date | string
+  userId: string
   points: number
   totalVoteCount?: number
   userVote?: number | null
@@ -23,6 +25,13 @@ interface Project {
   votes?: Array<{
     value: number
     userId: string
+  }>
+  promotions?: Array<{
+    id: string
+    type: string
+    startDate: string
+    endDate: string
+    isActive: boolean
   }>
 }
 
