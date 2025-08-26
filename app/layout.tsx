@@ -4,33 +4,54 @@ import './globals.css'
 import { Providers } from '@/components/providers'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
+import { Sidebar } from '@/components/sidebar'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import { redirect } from 'next/navigation'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'StartUpPush - Product Discovery Platform',
-  description: 'Where quality products get discovered by people who care.',
-  icons: {
-    icon: '/favicon.svg',
-    shortcut: '/favicon.svg',
-    apple: '/favicon.svg',
-  },
+  title: 'StartUpPush - Discover Amazing Projects',
+  description: 'Discover and share amazing startup projects. Find the next big thing in tech.',
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const session = await getServerSession(authOptions)
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
+      <head>
+        {/* Google Analytics */}
+        <script
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}');
+            `,
+          }}
+        />
+      </head>
       <body className={inter.className}>
         <Providers>
-          <div className="min-h-screen flex flex-col">
+          <div className="min-h-screen bg-background">
             <Header />
-            <main className="flex-1">
-              {children}
-            </main>
+            <div className="flex">
+              <Sidebar />
+              <main className="flex-1 p-6">
+                {children}
+              </main>
+            </div>
             <Footer />
           </div>
         </Providers>
