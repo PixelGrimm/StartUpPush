@@ -34,7 +34,7 @@ if (!process.env.EMAIL_SERVER_USER || !process.env.EMAIL_SERVER_PASSWORD) {
 }
 
 export const authOptions: NextAuthOptions = {
-  // adapter: PrismaAdapter(prisma), // Temporarily disabled due to type conflicts
+  adapter: PrismaAdapter(prisma) as any, // Type assertion to bypass type conflicts
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || '',
@@ -51,34 +51,10 @@ export const authOptions: NextAuthOptions = {
       },
       from: process.env.EMAIL_FROM || "noreply@startuppush.pro",
       sendVerificationRequest: async ({ identifier, url, provider }) => {
-        // For development, we'll create a user and log the link
+        // For development, we'll log the link
         // In production, you would send an actual email here
         try {
-          // Check if user exists, if not create one
-          let user = await prisma.user.findUnique({
-            where: { email: identifier }
-          })
-          
-          if (!user) {
-            user = await prisma.user.create({
-              data: {
-                email: identifier,
-                name: identifier.split('@')[0],
-                username: identifier.split('@')[0],
-                isProfileComplete: false,
-              }
-            })
-            console.log(`Created user: ${user.email}`)
-          }
-          
-          // Create a custom URL with the correct callback
-          const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
-          const customUrl = url.replace(
-            'callbackUrl=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fsignin',
-            'callbackUrl=' + encodeURIComponent(`${baseUrl}/auth/check-setup`)
-          )
-          
-          console.log(`Sign-in link for ${identifier}: ${customUrl}`)
+          console.log(`Sign-in link for ${identifier}: ${url}`)
         } catch (error) {
           console.error('Error in sendVerificationRequest:', error)
         }
