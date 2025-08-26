@@ -553,54 +553,7 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
           )}
         </div>
 
-        {/* You may also like */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold text-foreground mb-4">You may also like</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Link
-              href="/p/stripe"
-              className="bg-card border border-border rounded-lg p-4 hover:shadow-md transition-shadow"
-            >
-              <div className="flex items-start space-x-3">
-                <img
-                  src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=48&h=48&fit=crop"
-                  alt="Stripe"
-                  className="w-12 h-12 rounded-lg object-cover"
-                />
-                <div className="flex-1">
-                  <h3 className="font-semibold text-foreground">Stripe</h3>
-                  <p className="text-muted-foreground text-sm mb-2">Payment processing for the internet</p>
-                  <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                    <span>🔥 3420</span>
-                    <span>👍 25</span>
-                    <span>$1M MRR</span>
-                  </div>
-                </div>
-              </div>
-            </Link>
-            <Link
-              href="/p/nimvue"
-              className="bg-card border border-border rounded-lg p-4 hover:shadow-md transition-shadow"
-            >
-              <div className="flex items-start space-x-3">
-                <img
-                  src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=48&h=48&fit=crop"
-                  alt="Nimvue"
-                  className="w-12 h-12 rounded-lg object-cover"
-                />
-                <div className="flex-1">
-                  <h3 className="font-semibold text-foreground">Nimvue</h3>
-                  <p className="text-muted-foreground text-sm mb-2">Privacy-First Analytics</p>
-                  <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                    <span>🔥 1890</span>
-                    <span>👍 18</span>
-                    <span>$25K MRR</span>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          </div>
-        </div>
+
       </div>
 
       {/* Error/Success Modal */}
