@@ -22,6 +22,21 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Content filtering - check for inappropriate content
+    const inappropriateWords = [
+      'wtf', 'fuck', 'shit', 'bitch', 'ass', 'damn', 'hell',
+      'crap', 'piss', 'dick', 'cock', 'pussy', 'bastard',
+      'motherfucker', 'fucker', 'shitty', 'fucking', 'fucked'
+    ]
+    
+    const contentLower = content.toLowerCase()
+    const hasInappropriateContent = inappropriateWords.some(word => 
+      contentLower.includes(word)
+    )
+    
+    // Set status based on content
+    const commentStatus = hasInappropriateContent ? 'jailed' : 'active'
+
     // Get user
     const user = await prisma.user.findUnique({
       where: { email: session.user.email }
@@ -44,6 +59,7 @@ export async function POST(request: NextRequest) {
     const comment = await prisma.comment.create({
       data: {
         content: content.trim(),
+        status: commentStatus,
         userId: user.id,
         productId: productId,
         parentId: parentId || null
@@ -166,7 +182,8 @@ export async function GET(request: NextRequest) {
     const comments = await prisma.comment.findMany({
       where: { 
         productId,
-        parentId: null // Only get top-level comments
+        parentId: null, // Only get top-level comments
+        status: 'active' // Only show active comments
       },
       include: {
         user: {

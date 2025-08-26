@@ -13,6 +13,9 @@ export async function GET(request: NextRequest) {
     }
 
     const comments = await prisma.comment.findMany({
+      where: {
+        // Show all comments regardless of status for admin
+      },
       include: {
         user: {
           select: {
