@@ -9,10 +9,22 @@ import { NextAuthOptions } from "next-auth"
 // Validate required environment variables
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
   console.warn('⚠️ Google OAuth credentials not configured. Google login will not work.')
+  console.warn('   Please set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in Railway environment variables.')
 }
 
 if (!process.env.NEXTAUTH_SECRET) {
   console.warn('⚠️ NEXTAUTH_SECRET not configured. Using fallback secret.')
+  console.warn('   Please set NEXTAUTH_SECRET in Railway environment variables.')
+}
+
+if (!process.env.NEXTAUTH_URL) {
+  console.warn('⚠️ NEXTAUTH_URL not configured. Using fallback URL.')
+  console.warn('   Please set NEXTAUTH_URL=https://startuppush.pro in Railway environment variables.')
+}
+
+if (!process.env.EMAIL_SERVER_USER || !process.env.EMAIL_SERVER_PASSWORD) {
+  console.warn('⚠️ Email server credentials not configured. Magic link emails will not be sent.')
+  console.warn('   Please set EMAIL_SERVER_USER and EMAIL_SERVER_PASSWORD in Railway environment variables.')
 }
 
 export const authOptions: NextAuthOptions = {
@@ -24,14 +36,14 @@ export const authOptions: NextAuthOptions = {
     }),
     EmailProvider({
       server: {
-        host: "smtp.gmail.com",
-        port: 587,
+        host: process.env.EMAIL_SERVER_HOST || "smtp.gmail.com",
+        port: parseInt(process.env.EMAIL_SERVER_PORT || "587"),
         auth: {
-          user: "test@example.com",
-          pass: "test-password",
+          user: process.env.EMAIL_SERVER_USER || "test@example.com",
+          pass: process.env.EMAIL_SERVER_PASSWORD || "test-password",
         },
       },
-      from: "noreply@startuppush.pro",
+      from: process.env.EMAIL_FROM || "noreply@startuppush.pro",
       sendVerificationRequest: async ({ identifier, url, provider }) => {
         // For development, we'll create a user and log the link
         // In production, you would send an actual email here
