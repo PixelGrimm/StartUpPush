@@ -38,7 +38,7 @@ interface Product {
   userVote?: number | null
   _count: {
     votes: number
-    comments?: number
+    comments: number
   }
   votes?: Array<{
     value: number
@@ -77,7 +77,7 @@ const dummyProducts: Product[] = [
     createdAt: new Date().toISOString(),
     userId: 'user1',
     points: 2840,
-    _count: { votes: 15 },
+    _count: { votes: 15, comments: 5 },
     votes: Array.from({ length: 15 }, (_, i) => ({ value: 1, userId: `user${i}` }))
   },
   {
@@ -94,7 +94,7 @@ const dummyProducts: Product[] = [
     createdAt: new Date().toISOString(),
     userId: 'user2',
     points: 3420,
-    _count: { votes: 25 },
+    _count: { votes: 25, comments: 8 },
     votes: Array.from({ length: 25 }, (_, i) => ({ value: 1, userId: `user${i}` }))
   },
   {
@@ -111,7 +111,7 @@ const dummyProducts: Product[] = [
     createdAt: new Date().toISOString(),
     userId: 'user3',
     points: 1567,
-    _count: { votes: 12 },
+    _count: { votes: 12, comments: 3 },
     votes: Array.from({ length: 12 }, (_, i) => ({ value: 1, userId: `user${i}` }))
   },
   {
@@ -125,7 +125,7 @@ const dummyProducts: Product[] = [
     tags: ['Developer Tools', 'Project Management', 'Issue Tracking'],
     mrr: 75000,
     isPromoted: false,
-    createdAt: new Date(),
+    createdAt: new Date().toISOString(),
     userId: 'user4',
     points: 1234,
     _count: { votes: 8 },
@@ -142,7 +142,7 @@ const dummyProducts: Product[] = [
     tags: ['Design', 'Collaboration', 'UI/UX'],
     mrr: 300000,
     isPromoted: true,
-    createdAt: new Date(),
+    createdAt: new Date().toISOString(),
     userId: 'user5',
     points: 1987,
     _count: { votes: 20 },
@@ -159,7 +159,7 @@ const dummyProducts: Product[] = [
     tags: ['Communication', 'Team Chat', 'Collaboration'],
     mrr: 500000,
     isPromoted: false,
-    createdAt: new Date(),
+    createdAt: new Date().toISOString(),
     userId: 'user6',
     points: 1678,
     _count: { votes: 10 },

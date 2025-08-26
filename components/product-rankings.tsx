@@ -20,7 +20,7 @@ interface Project {
   userVote?: number | null
   _count: {
     votes: number
-    comments?: number
+    comments: number
   }
   votes?: Array<{
     value: number
