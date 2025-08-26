@@ -370,17 +370,16 @@ export default function HomePage() {
       
       {/* Hero Section */}
       <section className="py-16 bg-gradient-to-b from-background to-muted/20">
-        <div className="px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto">
           <div className="max-w-4xl mx-auto text-center">
             {/* Top Banner */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="inline-flex items-center gap-2 text-sm font-medium mb-6"
+              className="inline-block bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-sm font-medium mb-6"
             >
-              <Rocket className="h-4 w-4" />
-              Join the community, launch today
+              The community-driven platform for project discovery
             </motion.div>
             
             {/* Main Heading */}
@@ -390,7 +389,8 @@ export default function HomePage() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight"
             >
-              Get <span className="text-purple-600">instant visibility</span> for your project. Be discovered by <span className="text-purple-600">people who care</span> now.
+              Turn your product into a{' '}
+              <span className="text-purple-600">success story</span>.
             </motion.h1>
             
             {/* Subtext */}
@@ -400,7 +400,7 @@ export default function HomePage() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed"
             >
-              Thousands of entrepreneurs have launched projects and gained customers. Get featured placement, high DR SEO backlinks, and community exposure.
+              More than just a <span className="text-purple-600">launchpad</span>—StartUpPush is a community of <span className="text-blue-600">makers and innovators</span>. Discover, upvote, and support fresh ideas, while earning <strong>StartUpPush Points</strong> to boost the visibility of your own product.
             </motion.p>
             
             {/* CTA Button */}
@@ -412,7 +412,7 @@ export default function HomePage() {
               <Button size="lg" className="text-lg px-8 py-6 bg-black hover:bg-gray-800 text-white" asChild>
                 <Link href="/submit">
                   <Rocket className="mr-2 h-5 w-5" />
-                  Launch Your Project Now
+                  Submit Your Project
                 </Link>
               </Button>
             </motion.div>
@@ -421,7 +421,7 @@ export default function HomePage() {
       </section>
 
       {/* Main Content */}
-      <div className="px-4 sm:px-6 lg:px-8 py-8">
+      <div className="container mx-auto py-8">
         <div className="flex gap-8">
           {/* Left Sidebar */}
           <aside className="w-80 space-y-8">
