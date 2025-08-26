@@ -128,7 +128,7 @@ const dummyProducts: Product[] = [
     createdAt: new Date().toISOString(),
     userId: 'user4',
     points: 1234,
-    _count: { votes: 8 },
+    _count: { votes: 8, comments: 2 },
     votes: Array.from({ length: 8 }, (_, i) => ({ value: 1, userId: `user${i}` }))
   },
   {
@@ -145,7 +145,7 @@ const dummyProducts: Product[] = [
     createdAt: new Date().toISOString(),
     userId: 'user5',
     points: 1987,
-    _count: { votes: 20 },
+    _count: { votes: 20, comments: 12 },
     votes: Array.from({ length: 20 }, (_, i) => ({ value: 1, userId: `user${i}` }))
   },
   {
@@ -162,7 +162,7 @@ const dummyProducts: Product[] = [
     createdAt: new Date().toISOString(),
     userId: 'user6',
     points: 1678,
-    _count: { votes: 10 },
+    _count: { votes: 10, comments: 4 },
     votes: Array.from({ length: 10 }, (_, i) => ({ value: 1, userId: `user${i}` }))
   }
 ]
