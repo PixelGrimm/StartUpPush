@@ -6,12 +6,21 @@ import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 import { NextAuthOptions } from "next-auth"
 
+// Validate required environment variables
+if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+  console.warn('⚠️ Google OAuth credentials not configured. Google login will not work.')
+}
+
+if (!process.env.NEXTAUTH_SECRET) {
+  console.warn('⚠️ NEXTAUTH_SECRET not configured. Using fallback secret.')
+}
+
 export const authOptions: NextAuthOptions = {
   // adapter: PrismaAdapter(prisma), // Temporarily disabled due to type conflicts
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: process.env.GOOGLE_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
     }),
     EmailProvider({
       server: {
@@ -174,6 +183,7 @@ export const authOptions: NextAuthOptions = {
       return url
     },
   },
+  secret: process.env.NEXTAUTH_SECRET || 'fallback-secret-for-development',
   session: {
     strategy: "jwt",
     maxAge: 60 * 60 * 24 * 30, // 30 days
