@@ -101,7 +101,7 @@ export function ProjectCard({ project, userVote, onVote, showPromoted = true }: 
       }
       
       // Debug vote calculation for Slack
-      if (product.name === 'Slack') {
+      if (project.name === 'Slack') {
         console.log('🎨 Slack vote calculation result:', result)
       }
       
@@ -109,24 +109,24 @@ export function ProjectCard({ project, userVote, onVote, showPromoted = true }: 
     } else {
       // Fallback to _count.votes if votes array is not available
       return {
-        upvotes: product._count.votes,
+        upvotes: project._count.votes,
         downvotes: 0,
-        totalVotes: product._count.votes,
-        netVotes: product._count.votes
+        totalVotes: project._count.votes,
+        netVotes: project._count.votes
       }
     }
-  }, [product.votes, product._count.votes])
+  }, [project.votes, project._count.votes])
 
   // Parse tags string to array
-  const tagsArray = Array.isArray(product.tags) 
-    ? product.tags 
-    : (product.tags ? product.tags.split(',').map((tag: string) => tag.trim()) : [])
+  const tagsArray = Array.isArray(project.tags) 
+    ? project.tags 
+    : (project.tags ? project.tags.split(',').map((tag: string) => tag.trim()) : [])
 
   // Calculate product points (StartUpPush)
   const productPoints = (voteCounts.upvotes * 10) - (voteCounts.downvotes * 5)
 
   const handleVote = async (value: number, event?: React.MouseEvent) => {
-    console.log('🔥 VOTE BUTTON CLICKED!', { productId: product.id, value, currentUserVote })
+    console.log('🔥 VOTE BUTTON CLICKED!', { productId: project.id, value, currentUserVote })
     
     if (event) {
       event.preventDefault()

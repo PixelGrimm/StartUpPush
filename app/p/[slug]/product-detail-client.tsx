@@ -15,12 +15,15 @@ interface ProductDetailClientProps {
 }
 
 export function ProductDetailClient({ product }: ProductDetailClientProps) {
-  const { data: session } = useSession()
+  const { data: session, update } = useSession()
   const [userVote, setUserVote] = useState<number | null>(product.userVote || null)
   const [isVoting, setIsVoting] = useState(false)
   const [comments, setComments] = useState(product.comments || [])
   const [newComment, setNewComment] = useState('')
   const [isSubmittingComment, setIsSubmittingComment] = useState(false)
+  const [replyContent, setReplyContent] = useState('')
+  const [isSubmittingReply, setIsSubmittingReply] = useState(false)
+  const [replyingTo, setReplyingTo] = useState<string | null>(null)
   const [boostStatus, setBoostStatus] = useState<{ type: 'boosted' | 'max-boosted', endDate: string } | null>(null)
   const [voteCounts, setVoteCounts] = useState({
     upvotes: product.upvotes || 0,
@@ -145,7 +148,6 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
         }
         
         // Refresh session to update user points in header
-        const { update } = await import('next-auth/react')
         await update()
         
         // Force a small delay and refresh again to ensure points are updated
@@ -198,7 +200,6 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
         setNewComment('')
         
         // Refresh session to update user points in header
-        const { update } = await import('next-auth/react')
         await update()
         
         // Force a small delay and refresh again to ensure points are updated
@@ -235,7 +236,7 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
         console.log('Reply response:', data)
         
         // Update the comments to include the new reply
-        setComments(prevComments => 
+        setComments((prevComments: any[]) => 
           prevComments.map(comment => 
             comment.id === parentId 
               ? { ...comment, replies: [...(comment.replies || []), data.comment] }
@@ -247,7 +248,6 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
         setReplyingTo(null)
         
         // Refresh session to update user points in header
-        const { update } = await import('next-auth/react')
         await update()
         
         // Force a small delay and refresh again to ensure points are updated
@@ -532,7 +532,7 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
                         })
                       }
                       
-                      setComments(prevComments => updateCommentReplies(prevComments, parentId, newReply))
+                      setComments((prevComments: any[]) => updateCommentReplies(prevComments, parentId, newReply))
                     }}
                   />
                 </div>

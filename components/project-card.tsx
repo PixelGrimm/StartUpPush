@@ -19,9 +19,9 @@ interface ProjectCardProps {
     tagline: string
     description: string
     website: string
-    logo?: string
+    logo?: string | null
     tags: string[] | string
-    mrr?: number
+    mrr?: number | null
     isPromoted?: boolean
     createdAt: string
     userId: string

@@ -136,7 +136,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         products: featuredProducts.map(product => ({
           ...product,
-          tags: product.tags.split(',').map(tag => tag.trim()),
           userVote: userVotes[product.id] || null
         }))
       })

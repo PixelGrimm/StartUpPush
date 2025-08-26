@@ -23,7 +23,7 @@ export default function CheckSetupPage() {
   const checkUserSetup = async () => {
     try {
       // Check if profile is complete
-      if (!session.user.isProfileComplete) {
+      if (!session?.user?.isProfileComplete) {
         router.push('/profile-setup')
         return
       }

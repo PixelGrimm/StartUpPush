@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
         await NotificationService.createVoteNotification(
           productId,
           user.id,
-          product.userId,
+          project.userId,
           value
         )
       } catch (notificationError) {
@@ -158,14 +158,7 @@ export async function POST(request: NextRequest) {
     console.log('Vote counts calculated:', { upvotes, downvotes, totalVotes, netVotes })
 
     // Calculate the final user vote state (permanent votes)
-    let finalUserVote = null
-    if (existingVote) {
-      // User already voted - return existing vote (permanent)
-      finalUserVote = existingVote.value
-    } else {
-      // New vote
-      finalUserVote = value
-    }
+    const finalUserVote = value
 
     console.log('Vote response:', { 
       upvotes, 
@@ -174,7 +167,6 @@ export async function POST(request: NextRequest) {
       userVote: finalUserVote,
       pointsToAward,
       pointsToDeduct,
-      existingVoteValue: existingVote?.value,
       newVoteValue: value
     })
 
@@ -188,7 +180,9 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Error voting:', error)
-    console.error('Error stack:', error.stack)
+    if (error instanceof Error) {
+      console.error('Error stack:', error.stack)
+    }
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

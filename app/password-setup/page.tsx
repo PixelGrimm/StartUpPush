@@ -35,7 +35,7 @@ export default function PasswordSetupPage() {
   const checkPasswordStatus = async () => {
     try {
       // First check if profile is complete
-      if (!session.user.isProfileComplete) {
+      if (!session?.user?.isProfileComplete) {
         router.push('/profile-setup')
         return
       }

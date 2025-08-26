@@ -292,10 +292,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
     })
 
     // Find product by matching slug
-    product = allProducts.find(p => {
+    const foundProduct = allProducts.find(p => {
       const productSlug = p.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
       return productSlug === slug.toLowerCase()
     })
+    
+    if (foundProduct) {
+      product = foundProduct
+    }
   }
 
 

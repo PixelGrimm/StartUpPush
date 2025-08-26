@@ -13,7 +13,7 @@ interface CommentItemProps {
 }
 
 export function CommentItem({ comment, productId, onReplySubmitted, level = 0 }: CommentItemProps) {
-  const { data: session } = useSession()
+  const { data: session, update } = useSession()
   const [replyingTo, setReplyingTo] = useState<string | null>(null)
   const [replyContent, setReplyContent] = useState('')
   const [isSubmittingReply, setIsSubmittingReply] = useState(false)
@@ -36,7 +36,6 @@ export function CommentItem({ comment, productId, onReplySubmitted, level = 0 }:
         onReplySubmitted(parentId, data.comment)
         setReplyContent('')
         setReplyingTo(null)
-        const { update } = await import('next-auth/react')
         await update()
         setTimeout(async () => { await update() }, 500)
       }
