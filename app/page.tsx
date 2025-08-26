@@ -31,7 +31,7 @@ interface Product {
   tags: string[] | string
   mrr?: number | null
   isPromoted: boolean
-  createdAt: Date | string
+  createdAt: string
   userId: string
   points: number // StartUpPush points
   totalVoteCount?: number
@@ -74,7 +74,7 @@ const dummyProducts: Product[] = [
     tags: ['AI Tools', 'Productivity', 'Collaboration'],
     mrr: 50000,
     isPromoted: true,
-    createdAt: new Date(),
+    createdAt: new Date().toISOString(),
     userId: 'user1',
     points: 2840,
     _count: { votes: 15 },
@@ -84,13 +84,15 @@ const dummyProducts: Product[] = [
     id: '2',
     name: 'Stripe',
     tagline: 'Payment processing for the internet',
+    description: 'Payment processing for the internet',
     logo: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=64&h=64&fit=crop',
     website: 'https://stripe.com',
     category: 'Fintech',
     tags: ['Fintech', 'Payments', 'API'],
     mrr: 1000000,
     isPromoted: true,
-    createdAt: new Date(),
+    createdAt: new Date().toISOString(),
+    userId: 'user2',
     points: 3420,
     _count: { votes: 25 },
     votes: Array.from({ length: 25 }, (_, i) => ({ value: 1, userId: `user${i}` }))
@@ -99,13 +101,15 @@ const dummyProducts: Product[] = [
     id: '3',
     name: 'Vercel',
     tagline: 'Deploy frontend developers',
+    description: 'Deploy frontend developers',
     logo: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=64&h=64&fit=crop',
     website: 'https://vercel.com',
     category: 'Developer Tools',
     tags: ['Developer Tools', 'Hosting', 'Deployment'],
     mrr: 200000,
     isPromoted: false,
-    createdAt: new Date(),
+    createdAt: new Date().toISOString(),
+    userId: 'user3',
     points: 1567,
     _count: { votes: 12 },
     votes: Array.from({ length: 12 }, (_, i) => ({ value: 1, userId: `user${i}` }))
@@ -114,6 +118,7 @@ const dummyProducts: Product[] = [
     id: '4',
     name: 'Linear',
     tagline: 'Issue tracking built for high-performance teams',
+    description: 'Issue tracking built for high-performance teams',
     logo: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=64&h=64&fit=crop',
     website: 'https://linear.app',
     category: 'Developer Tools',
@@ -121,6 +126,7 @@ const dummyProducts: Product[] = [
     mrr: 75000,
     isPromoted: false,
     createdAt: new Date(),
+    userId: 'user4',
     points: 1234,
     _count: { votes: 8 },
     votes: Array.from({ length: 8 }, (_, i) => ({ value: 1, userId: `user${i}` }))
@@ -129,6 +135,7 @@ const dummyProducts: Product[] = [
     id: '5',
     name: 'Figma',
     tagline: 'Collaborative interface design tool',
+    description: 'Collaborative interface design tool',
     logo: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=64&h=64&fit=crop',
     website: 'https://figma.com',
     category: 'Design',
@@ -136,6 +143,7 @@ const dummyProducts: Product[] = [
     mrr: 300000,
     isPromoted: true,
     createdAt: new Date(),
+    userId: 'user5',
     points: 1987,
     _count: { votes: 20 },
     votes: Array.from({ length: 20 }, (_, i) => ({ value: 1, userId: `user${i}` }))
@@ -144,6 +152,7 @@ const dummyProducts: Product[] = [
     id: '6',
     name: 'Slack',
     tagline: 'Where work happens',
+    description: 'Where work happens',
     logo: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=64&h=64&fit=crop',
     website: 'https://slack.com',
     category: 'Communication',
@@ -151,6 +160,7 @@ const dummyProducts: Product[] = [
     mrr: 500000,
     isPromoted: false,
     createdAt: new Date(),
+    userId: 'user6',
     points: 1678,
     _count: { votes: 10 },
     votes: Array.from({ length: 10 }, (_, i) => ({ value: 1, userId: `user${i}` }))

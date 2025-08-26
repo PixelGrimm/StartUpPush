@@ -13,7 +13,7 @@ interface Project {
   tags: string[] | string
   mrr?: number | null
   isPromoted: boolean
-  createdAt: Date | string
+  createdAt: string
   userId: string
   points: number
   totalVoteCount?: number
