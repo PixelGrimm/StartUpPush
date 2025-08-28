@@ -150,7 +150,10 @@ export default function AdminPage() {
       })
       if (statsResponse.ok) {
         const statsData = await statsResponse.json()
+        console.log('Admin page: Stats data received:', statsData)
         setStats(statsData)
+      } else {
+        console.error('Admin page: Stats API failed:', statsResponse.status, await statsResponse.text())
       }
 
       // Fetch projects
@@ -159,8 +162,11 @@ export default function AdminPage() {
       })
       if (projectsResponse.ok) {
         const projectsData = await projectsResponse.json()
+        console.log('Admin page: Projects data received:', projectsData)
         setProjects(projectsData.projects)
         setJailedProjects(projectsData.projects.filter((p: Project) => p.status === 'jailed'))
+      } else {
+        console.error('Admin page: Projects API failed:', projectsResponse.status, await projectsResponse.text())
       }
 
       // Fetch comments
@@ -182,7 +188,10 @@ export default function AdminPage() {
       })
       if (boostResponse.ok) {
         const boostData = await boostResponse.json()
+        console.log('Admin page: Boost sales data received:', boostData)
         setBoostSales(boostData.sales)
+      } else {
+        console.error('Admin page: Boost sales API failed:', boostResponse.status, await boostResponse.text())
       }
 
       // Fetch users
@@ -191,7 +200,10 @@ export default function AdminPage() {
       })
       if (usersResponse.ok) {
         const usersData = await usersResponse.json()
+        console.log('Admin page: Users data received:', usersData)
         setUsers(usersData.users)
+      } else {
+        console.error('Admin page: Users API failed:', usersResponse.status, await usersResponse.text())
       }
     } catch (error) {
       console.error('Error fetching admin data:', error)
@@ -398,7 +410,7 @@ export default function AdminPage() {
         </Card>
 
         {/* Stats Overview */}
-        {stats && (
+        {stats ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -480,6 +492,17 @@ export default function AdminPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stats.monthlyVisitors}</div>
+              </CardContent>
+            </Card>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Loading Stats...</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">-</div>
               </CardContent>
             </Card>
           </div>

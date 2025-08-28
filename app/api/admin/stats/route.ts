@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
       return sum
     }, 0)
 
-    // Real visitor data based on user activity
+    // Real visitor data based on user activity (simplified)
     const now = new Date()
     const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000)
     const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
@@ -81,31 +81,22 @@ export async function GET(request: NextRequest) {
       weeklyVisitors,
       monthlyVisitors
     ] = await Promise.all([
-      // Daily visitors: users who logged in or had activity in the last 24 hours
+      // Daily visitors: users who had activity in the last 24 hours
       prisma.user.count({
         where: {
-          OR: [
-            { updatedAt: { gte: oneDayAgo } },
-            { sessions: { some: { expires: { gte: now } } } }
-          ]
+          updatedAt: { gte: oneDayAgo }
         }
       }),
-      // Weekly visitors: users who logged in or had activity in the last 7 days
+      // Weekly visitors: users who had activity in the last 7 days
       prisma.user.count({
         where: {
-          OR: [
-            { updatedAt: { gte: oneWeekAgo } },
-            { sessions: { some: { expires: { gte: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000) } } } }
-          ]
+          updatedAt: { gte: oneWeekAgo }
         }
       }),
-      // Monthly visitors: users who logged in or had activity in the last 30 days
+      // Monthly visitors: users who had activity in the last 30 days
       prisma.user.count({
         where: {
-          OR: [
-            { updatedAt: { gte: oneMonthAgo } },
-            { sessions: { some: { expires: { gte: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000) } } } }
-          ]
+          updatedAt: { gte: oneMonthAgo }
         }
       })
     ])
