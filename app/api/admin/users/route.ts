@@ -27,6 +27,16 @@ export async function GET(request: NextRequest) {
       },
     })
 
+    console.log('Admin users API - Found users:', users.length)
+    console.log('Admin users API - User details:', users.map(u => ({
+      id: u.id,
+      email: u.email,
+      name: u.name,
+      isBanned: u.isBanned,
+      isMuted: u.isMuted,
+      points: u.points
+    })))
+
     return NextResponse.json({ users })
   } catch (error) {
     console.error('Error fetching users:', error)

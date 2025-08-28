@@ -3,15 +3,22 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
 async function migrateRailway() {
+  console.log('🚀 Starting Railway database migration...')
+  
+  // Set a timeout for the entire migration process
+  const timeout = setTimeout(() => {
+    console.log('⏰ Migration timeout reached, continuing with app startup...')
+    process.exit(0)
+  }, 30000) // 30 second timeout
+
   try {
-    console.log('🚀 Starting Railway database migration...')
-    
     // Test database connection first
     try {
       await prisma.$connect()
       console.log('✅ Database connection successful')
     } catch (error) {
       console.log('⚠️ Database connection failed, skipping migration:', error.message)
+      clearTimeout(timeout)
       return
     }
     
@@ -19,12 +26,14 @@ async function migrateRailway() {
     try {
       await prisma.$queryRaw`SELECT "isBanned", "isMuted" FROM "User" LIMIT 1`
       console.log('✅ Columns already exist, no migration needed')
+      clearTimeout(timeout)
       return
     } catch (error) {
       if (error.code === 'P2022') {
         console.log('📋 Adding missing columns to User table...')
       } else {
         console.log('⚠️ Unexpected error checking columns:', error.message)
+        clearTimeout(timeout)
         return
       }
     }
@@ -53,6 +62,7 @@ async function migrateRailway() {
     console.error('❌ Migration failed:', error.message)
     // Don't throw error, just log it
   } finally {
+    clearTimeout(timeout)
     try {
       await prisma.$disconnect()
     } catch (error) {
@@ -61,4 +71,7 @@ async function migrateRailway() {
   }
 }
 
-migrateRailway()
+// Run migration asynchronously without blocking
+migrateRailway().catch(error => {
+  console.log('⚠️ Migration error (non-blocking):', error.message)
+})

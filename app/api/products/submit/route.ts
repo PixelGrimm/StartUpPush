@@ -6,9 +6,13 @@ import { shouldAutoJail, getBadWordsInContent } from '@/lib/bad-words'
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('Project submission API called')
     const session = await getServerSession(authOptions)
     
+    console.log('Session user:', session?.user?.id, session?.user?.email)
+    
     if (!session?.user?.id) {
+      console.log('No session user ID found')
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
     }
 
@@ -83,16 +87,21 @@ export async function POST(request: NextRequest) {
     }
 
     // Get user and check ban status
+    console.log('Looking up user with ID:', session.user.id)
     const user = await prisma.user.findUnique({
       where: { id: session.user.id }
     })
 
+    console.log('User found:', user ? 'Yes' : 'No', user?.email, user?.isBanned, user?.isMuted)
+
     if (!user) {
+      console.log('User not found in database')
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
     // Check if user is banned
     if (user.isBanned) {
+      console.log('User is banned')
       return NextResponse.json({ error: 'Your account has been banned' }, { status: 403 })
     }
 
