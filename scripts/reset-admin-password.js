@@ -5,47 +5,38 @@ const prisma = new PrismaClient()
 
 async function resetAdminPassword() {
   try {
-    console.log('🔐 Resetting Admin Password...\n')
-
-    const adminEmail = 'alexszabo89@icloud.com'
-    const newPassword = 'Sofia2022@@'
-
-    // Hash the new password
-    const hashedPassword = await bcrypt.hash(newPassword, 12)
+    console.log('Resetting admin password...')
     
-    console.log('📧 Admin Email:', adminEmail)
-    console.log('🔑 New Password:', newPassword)
-    console.log('🔒 Hashed Password:', hashedPassword.substring(0, 20) + '...')
-    console.log('')
+    // Check if admin user exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email: 'alexszabo89@icloud.com' }
+    })
 
-    // Update the admin user's password
+    if (!existingUser) {
+      console.log('❌ Admin user not found! Run create-admin-user.js first.')
+      return
+    }
+
+    // Hash new password
+    const newPassword = 'admin123'
+    const hashedPassword = await bcrypt.hash(newPassword, 12)
+
+    // Update admin user password
     const updatedUser = await prisma.user.update({
-      where: { email: adminEmail },
-      data: { 
+      where: { email: 'alexszabo89@icloud.com' },
+      data: {
         password: hashedPassword,
+        name: 'Alex Szabo',
         isProfileComplete: true
       }
     })
 
-    console.log('✅ Admin password updated successfully!')
-    console.log('👤 User ID:', updatedUser.id)
-    console.log('📧 Email:', updatedUser.email)
-    console.log('✅ Profile Complete:', updatedUser.isProfileComplete)
-    console.log('')
-
-    console.log('🚀 Test Login:')
-    console.log('1. Go to: http://localhost:3000/api/auth/signout')
-    console.log('2. Go to: http://localhost:3000/auth/signin')
-    console.log('3. Email: alexszabo89@icloud.com')
-    console.log('4. Password: Sofia2022@@')
-    console.log('5. Click "Sign In"')
-    console.log('6. Visit: http://localhost:3000/admin')
-    console.log('')
-
-    console.log('📊 Expected Results:')
-    console.log('- ✅ Login should work without "Invalid password" error')
-    console.log('- ✅ Admin dashboard should load with all data')
-    console.log('- ✅ No more 401 errors in console')
+    console.log('✅ Admin password reset successfully!')
+    console.log('Email:', updatedUser.email)
+    console.log('New Password:', newPassword)
+    console.log('Name:', updatedUser.name)
+    console.log('Points:', updatedUser.points)
+    console.log('Is Profile Complete:', updatedUser.isProfileComplete)
 
   } catch (error) {
     console.error('❌ Error resetting admin password:', error)
