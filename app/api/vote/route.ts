@@ -37,10 +37,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    // Check if user is banned
-    if (user.isBanned) {
-      return NextResponse.json({ error: 'Your account has been banned' }, { status: 403 })
-    }
+
 
     console.log('Finding project...')
     // Check if project exists

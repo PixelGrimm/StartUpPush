@@ -52,8 +52,6 @@ model User {
   linkedin      String?
   points        Int       @default(0)
   isProfileComplete Boolean @default(false)
-  isBanned      Boolean   @default(false)
-  isMuted       Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

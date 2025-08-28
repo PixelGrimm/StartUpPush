@@ -92,17 +92,11 @@ export async function POST(request: NextRequest) {
       where: { id: session.user.id }
     })
 
-    console.log('User found:', user ? 'Yes' : 'No', user?.email, user?.isBanned, user?.isMuted)
+    console.log('User found:', user ? 'Yes' : 'No', user?.email)
 
     if (!user) {
       console.log('User not found in database')
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
-    }
-
-    // Check if user is banned
-    if (user.isBanned) {
-      console.log('User is banned')
-      return NextResponse.json({ error: 'Your account has been banned' }, { status: 403 })
     }
 
     // Check for bad words in content

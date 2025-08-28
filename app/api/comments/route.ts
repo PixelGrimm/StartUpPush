@@ -39,15 +39,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    // Check if user is banned
-    if (user.isBanned) {
-      return NextResponse.json({ error: 'Your account has been banned' }, { status: 403 })
-    }
 
-    // Check if user is muted (can't comment)
-    if (user.isMuted) {
-      return NextResponse.json({ error: 'Your account has been muted. You cannot comment at this time.' }, { status: 403 })
-    }
 
     // Check if product exists
     const product = await prisma.product.findUnique({
