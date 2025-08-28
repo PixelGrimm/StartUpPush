@@ -28,7 +28,7 @@ export default withAuth(
       // Check admin access for admin pages
       if (pathname.startsWith('/admin')) {
         const adminEmails = ['alexszabo89@icloud.com', 'admin@startuppush.com']
-        if (!adminEmails.includes(token.email)) {
+        if (!token.email || !adminEmails.includes(token.email)) {
           console.log('Middleware - Non-admin user trying to access admin page, redirecting to home')
           return NextResponse.redirect(new URL('/', req.url))
         }

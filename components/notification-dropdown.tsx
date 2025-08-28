@@ -18,7 +18,7 @@ import { useNotificationStore } from '@/lib/notification-store'
 
 interface Notification {
   id: string
-  type: 'comment' | 'reply' | 'vote' | 'update' | 'PROJECT_APPROVED' | 'PROJECT_JAILED' | 'PROJECT_DELETED' | 'COMMENT_APPROVED' | 'COMMENT_JAILED' | 'COMMENT_DELETED'
+  type: string
   title: string
   message: string
   isRead: boolean

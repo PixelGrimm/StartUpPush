@@ -9,6 +9,17 @@ interface Notification {
   createdAt: string
   productId?: string
   commentId?: string
+  product?: {
+    id: string
+    name: string
+    logo?: string | null
+  }
+  fromUser?: {
+    id: string
+    name?: string | null
+    username?: string | null
+    image?: string | null
+  }
 }
 
 interface NotificationStore {

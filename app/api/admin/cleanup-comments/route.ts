@@ -16,10 +16,10 @@ export async function POST(request: NextRequest) {
     const result1 = await prisma.comment.deleteMany({
       where: {
         OR: [
-          { content: { contains: 'wtf', mode: 'insensitive' } },
-          { content: { contains: 'hi', mode: 'insensitive' } },
-          { content: { contains: 'test', mode: 'insensitive' } },
-          { content: { contains: 'hello', mode: 'insensitive' } },
+          { content: { contains: 'wtf' } },
+          { content: { contains: 'hi' } },
+          { content: { contains: 'test' } },
+          { content: { contains: 'hello' } },
         ]
       }
     });
