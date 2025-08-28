@@ -35,7 +35,7 @@ interface Product {
     votes: number
     comments: number
   }
-  votes?: Array<{
+  votes: Array<{
     value: number
     userId: string
   }>
@@ -56,145 +56,17 @@ interface BlogPost {
   createdAt: Date
 }
 
-// Sample data matching the image
-const sampleProducts: Product[] = [
-  {
-    id: '1',
-    name: 'Aura++',
-    tagline: 'Launch your product in a click and boost your online aura.',
-    description: 'Launch your product in a click and boost your online aura.',
-    logo: null,
-    website: 'https://auraplus.com',
-    category: 'Project Management',
-    tags: ['Project Management', 'SEO & Content Marketing'],
-    mrr: null,
-    isPromoted: false,
-    createdAt: new Date().toISOString(),
-    userId: 'user1',
-    points: 1,
-    _count: { votes: 5, comments: 2 },
-    votes: Array.from({ length: 5 }, (_, i) => ({ value: 1, userId: `user${i}` }))
-  },
-  {
-    id: '2',
-    name: 'CrabClear',
-    tagline: 'Real Data Removal from 1,500+ Brokers',
-    description: 'Real Data Removal from 1,500+ Brokers',
-    logo: null,
-    website: 'https://crabclear.com',
-    category: 'Cybersecurity & Privacy',
-    tags: ['Cybersecurity & Privacy'],
-    mrr: null,
-    isPromoted: false,
-    createdAt: new Date().toISOString(),
-    userId: 'user2',
-    points: 1,
-    _count: { votes: 3, comments: 1 },
-    votes: Array.from({ length: 3 }, (_, i) => ({ value: 1, userId: `user${i}` }))
-  },
-  {
-    id: '3',
-    name: 'Tier list World',
-    tagline: 'Create, Share, and Discover Your Tier List',
-    description: 'Create, Share, and Discover Your Tier List',
-    logo: null,
-    website: 'https://tierlistworld.com',
-    category: 'Design Tools',
-    tags: ['Design Tools'],
-    mrr: null,
-    isPromoted: false,
-    createdAt: new Date().toISOString(),
-    userId: 'user3',
-    points: 1,
-    _count: { votes: 3, comments: 1 },
-    votes: Array.from({ length: 3 }, (_, i) => ({ value: 1, userId: `user${i}` }))
-  },
-  {
-    id: '4',
-    name: 'Shipybara',
-    tagline: 'Launch your startup, get seen by early adopters',
-    description: 'Launch your startup, get seen by early adopters',
-    logo: null,
-    website: 'https://shipybara.com',
-    category: 'SEO & Content Marketing',
-    tags: ['SEO & Content Marketing'],
-    mrr: null,
-    isPromoted: false,
-    createdAt: new Date().toISOString(),
-    userId: 'user4',
-    points: 1,
-    _count: { votes: 3, comments: 1 },
-    votes: Array.from({ length: 3 }, (_, i) => ({ value: 1, userId: `user${i}` }))
-  }
-]
+// Empty arrays for when no products exist
+const sampleProducts: Product[] = []
+const promotedProducts: Product[] = []
 
-const promotedProducts: Product[] = [
-  {
-    id: '5',
-    name: 'Averi AI',
-    tagline: 'The AI Marketing Workspace: Strategy, Content, Team in One',
-    description: 'The AI Marketing Workspace: Strategy, Content, Team in One',
-    logo: null,
-    website: 'https://averiai.com',
-    category: 'AI Tools',
-    tags: ['AI Tools', 'Writing & Documentation', 'Automation & Workflow', 'SEO & Content Marketing', 'Social Media & Influencer Tools'],
-    mrr: 100000,
-    isPromoted: true,
-    createdAt: new Date().toISOString(),
-    userId: 'user5',
-    points: 101,
-    _count: { votes: 12, comments: 8 },
-    votes: Array.from({ length: 12 }, (_, i) => ({ value: 1, userId: `user${i}` }))
-  },
-  {
-    id: '6',
-    name: '[@fuck.it] - Email with Attitude',
-    tagline: 'Pure, secure and exclusive email with zero ads',
-    description: 'Pure, secure and exclusive email with zero ads',
-    logo: null,
-    website: 'https://fuck.it',
-    category: 'Cybersecurity & Privacy',
-    tags: ['Cybersecurity & Privacy', 'Project Management', 'Other'],
-    mrr: null,
-    isPromoted: true,
-    createdAt: new Date().toISOString(),
-    userId: 'user6',
-    points: 1,
-    _count: { votes: 13, comments: 6 },
-    votes: Array.from({ length: 13 }, (_, i) => ({ value: 1, userId: `user${i}` }))
-  }
-]
-
-const featuredProducts = [
-  {
-    name: 'Grow a Garden Trade Calculator',
-    description: 'Calculate your crop and pet trade values instantly.',
-    image: '/placeholder.jpg',
-    badge: 'TRENDING',
-    url: 'peerpush.net'
-  },
-  {
-    name: 'Greenmor Mail',
-    description: 'Custom Email for Businesses and Professionals',
-    image: '/placeholder.jpg',
-    badge: '#1 OF THE DAY',
-    url: 'peerpush.net'
-  },
-  {
-    name: 'Wan AI Video Generator',
-    description: 'creating stunning videos for professional and creative use.',
-    image: '/placeholder.jpg',
-    badge: '#1 OF THE WEEK',
-    url: 'peerpush.net'
-  },
-  {
-    name: 'iSchedulEDU',
-    description: 'Smarter Scheduling for Smarter Teaching',
-    image: '/placeholder.jpg',
-    badge: '#1 OF THE MONTH',
-    url: 'peerpush.net'
-  }
-]
+const featuredProducts: Array<{
+  name: string
+  description: string
+  image: string
+  badge: string
+  url: string
+}> = []
 
 export default function HomePage() {
   const { data: session } = useSession()
@@ -261,7 +133,7 @@ export default function HomePage() {
   }
 
   const displayProducts = getFilteredProducts()
-  const displayPromotedProducts = promotedProducts
+  const displayPromotedProducts = products.filter(p => p.isPromoted)
 
   return (
     <div className="min-h-screen bg-background">
@@ -339,11 +211,27 @@ export default function HomePage() {
                 {activeTab === 'recently updated' && `Recently Updated ${displayProducts.length} Project`}
               </h2>
               
-                             <div className="space-y-4">
-                 {displayProducts.map((product) => (
-                   <SimpleProductCard key={product.id} product={product} />
-                 ))}
-               </div>
+                                           {displayProducts.length > 0 ? (
+                <div className="space-y-4">
+                  {displayProducts.map((product) => (
+                    <SimpleProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="text-gray-500 dark:text-gray-400 mb-4">
+                    <Rocket className="h-12 w-12 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium mb-2">No projects yet</h3>
+                    <p className="text-sm">Be the first to submit a project!</p>
+                  </div>
+                  <Button asChild>
+                    <Link href="/submit">
+                      <Rocket className="mr-2 h-4 w-4" />
+                      Submit Your Project
+                    </Link>
+                  </Button>
+                </div>
+              )}
             </div>
 
             {/* Promoted Section */}
@@ -352,11 +240,20 @@ export default function HomePage() {
                 🔥 Promoted
               </h2>
               
-                             <div className="space-y-4">
-                 {displayPromotedProducts.map((product) => (
-                   <SimpleProductCard key={product.id} product={product} />
-                 ))}
-               </div>
+                                           {displayPromotedProducts.length > 0 ? (
+                <div className="space-y-4">
+                  {displayPromotedProducts.map((product) => (
+                    <SimpleProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="text-gray-500 dark:text-gray-400">
+                    <h3 className="text-sm font-medium mb-1">No promoted projects</h3>
+                    <p className="text-xs">Promoted projects will appear here</p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -368,28 +265,37 @@ export default function HomePage() {
                 🏆 Featured Products
               </h3>
               
-              <div className="space-y-4">
-                {featuredProducts.map((product, index) => (
-                  <div key={index} className="flex items-start space-x-3">
-                    <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-lg flex-shrink-0 relative">
-                      <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs px-1 py-0.5 rounded">
-                        {product.badge}
+              {featuredProducts.length > 0 ? (
+                <div className="space-y-4">
+                  {featuredProducts.map((product, index) => (
+                    <div key={index} className="flex items-start space-x-3">
+                      <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-lg flex-shrink-0 relative">
+                        <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs px-1 py-0.5 rounded">
+                          {product.badge}
+                        </div>
+                        <div className="text-xs text-gray-500 absolute bottom-1 left-1">
+                          {product.url}
+                        </div>
                       </div>
-                      <div className="text-xs text-gray-500 absolute bottom-1 left-1">
-                        {product.url}
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                          {product.name}
+                        </h4>
+                        <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">
+                          {product.description}
+                        </p>
                       </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                        {product.name}
-                      </h4>
-                      <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">
-                        {product.description}
-                      </p>
-                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="text-gray-500 dark:text-gray-400">
+                    <h3 className="text-sm font-medium mb-1">No featured products</h3>
+                    <p className="text-xs">Featured products will appear here</p>
                   </div>
-                ))}
-              </div>
+                </div>
+              )}
             </div>
 
             {/* Latest from Blog */}
