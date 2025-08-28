@@ -17,8 +17,6 @@ async function createAdminUser() {
       console.log('Email:', existingUser.email)
       console.log('Name:', existingUser.name)
       console.log('Points:', existingUser.points)
-      console.log('Is Banned:', existingUser.isBanned)
-      console.log('Is Muted:', existingUser.isMuted)
       return
     }
 
@@ -33,8 +31,7 @@ async function createAdminUser() {
         password: hashedPassword,
         points: 1000,
         isProfileComplete: true,
-        isBanned: false,
-        isMuted: false,
+
         username: 'alexszabo'
       }
     })

@@ -32,8 +32,6 @@ export async function GET(request: NextRequest) {
       id: u.id,
       email: u.email,
       name: u.name,
-      isBanned: u.isBanned,
-      isMuted: u.isMuted,
       points: u.points
     })))
 
