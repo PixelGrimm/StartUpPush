@@ -12,7 +12,7 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
     "railway:build": "prisma generate && next build",
-    "railway:start": "node scripts/start-railway.js",
+    "railway:start": "npm start",
     "db:local": "node scripts/setup-local-db.js",
     "db:production": "node scripts/setup-production-db.js",
     "admin:create": "node scripts/create-admin-user.js",
