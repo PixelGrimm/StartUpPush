@@ -82,6 +82,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'A product with this name already exists' }, { status: 400 })
     }
 
+    // Get user and check ban status
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id }
+    })
+
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    }
+
+    // Check if user is banned
+    if (user.isBanned) {
+      return NextResponse.json({ error: 'Your account has been banned' }, { status: 403 })
+    }
+
     // Check for bad words in content
     const contentToCheck = `${name} ${tagline} ${description}`.toLowerCase()
     const hasBadWords = shouldAutoJail(contentToCheck)

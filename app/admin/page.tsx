@@ -84,6 +84,22 @@ interface BoostSale {
   }
 }
 
+interface User {
+  id: string
+  name: string
+  email: string
+  points: number
+  isProfileComplete: boolean
+  isBanned: boolean
+  isMuted: boolean
+  createdAt: string
+  _count: {
+    products: number
+    comments: number
+    votes: number
+  }
+}
+
 export default function AdminPage() {
   const { data: session } = useSession()
   const router = useRouter()
@@ -95,6 +111,7 @@ export default function AdminPage() {
   const [projects, setProjects] = useState<Project[]>([])
   const [comments, setComments] = useState<Comment[]>([])
   const [boostSales, setBoostSales] = useState<BoostSale[]>([])
+  const [users, setUsers] = useState<User[]>([])
   const [jailedProjects, setJailedProjects] = useState<Project[]>([])
   const [jailedComments, setJailedComments] = useState<Comment[]>([])
   const [loading, setLoading] = useState(true)
@@ -167,6 +184,15 @@ export default function AdminPage() {
         const boostData = await boostResponse.json()
         setBoostSales(boostData.sales)
       }
+
+      // Fetch users
+      const usersResponse = await fetch('/api/admin/users', {
+        credentials: 'include'
+      })
+      if (usersResponse.ok) {
+        const usersData = await usersResponse.json()
+        setUsers(usersData.users)
+      }
     } catch (error) {
       console.error('Error fetching admin data:', error)
     } finally {
@@ -205,6 +231,23 @@ export default function AdminPage() {
       }
     } catch (error) {
       console.error('Error updating comment:', error)
+    }
+  }
+
+  const handleUserAction = async (userId: string, action: 'ban' | 'unban' | 'mute' | 'unmute') => {
+    try {
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ action })
+      })
+
+      if (response.ok) {
+        fetchAdminData() // Refresh data - this will preserve the active tab
+      }
+    } catch (error) {
+      console.error('Error updating user:', error)
     }
   }
 
@@ -254,6 +297,12 @@ export default function AdminPage() {
     sale.product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     sale.user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     sale.type.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+  const filteredUsers = users.filter(user => 
+    searchQuery === '' || 
+    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   if (!isAuthenticated) {
@@ -441,6 +490,7 @@ export default function AdminPage() {
           <TabsList>
             <TabsTrigger value="projects">Projects</TabsTrigger>
             <TabsTrigger value="comments">Comments</TabsTrigger>
+            <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="boost-sales">Boost Sales</TabsTrigger>
             <TabsTrigger value="jail">Jail</TabsTrigger>
           </TabsList>
@@ -557,6 +607,85 @@ export default function AdminPage() {
                           <XCircle className="h-4 w-4 mr-1" />
                           Delete
                         </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Users Tab */}
+          <TabsContent value="users" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>All Users</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {filteredUsers.map((user) => (
+                    <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-semibold">{user.name || 'No name'}</h3>
+                          {user.isBanned && (
+                            <span className="px-2 py-1 text-xs bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 rounded-full">
+                              BANNED
+                            </span>
+                          )}
+                          {user.isMuted && (
+                            <span className="px-2 py-1 text-xs bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200 rounded-full">
+                              MUTED
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground">{user.email}</p>
+                        <p className="text-xs text-muted-foreground">
+                          Points: {user.points} • Joined: {new Date(user.createdAt).toLocaleDateString()}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Projects: {user._count.products} • Comments: {user._count.comments} • Votes: {user._count.votes}
+                        </p>
+                      </div>
+                      <div className="flex gap-2">
+                        {user.isBanned ? (
+                          <Button
+                            size="sm"
+                            variant="default"
+                            onClick={() => handleUserAction(user.id, 'unban')}
+                          >
+                            <CheckCircle className="h-4 w-4 mr-1" />
+                            Unban
+                          </Button>
+                        ) : (
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => handleUserAction(user.id, 'ban')}
+                          >
+                            <Shield className="h-4 w-4 mr-1" />
+                            Ban
+                          </Button>
+                        )}
+                        {user.isMuted ? (
+                          <Button
+                            size="sm"
+                            variant="default"
+                            onClick={() => handleUserAction(user.id, 'unmute')}
+                          >
+                            <CheckCircle className="h-4 w-4 mr-1" />
+                            Unmute
+                          </Button>
+                        ) : (
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => handleUserAction(user.id, 'mute')}
+                          >
+                            <Shield className="h-4 w-4 mr-1" />
+                            Mute
+                          </Button>
+                        )}
                       </div>
                     </div>
                   ))}

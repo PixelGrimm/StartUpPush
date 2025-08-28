@@ -70,10 +70,45 @@ export async function GET(request: NextRequest) {
       return sum
     }, 0)
 
-    // Mock visitor data (in a real app, this would come from analytics)
-    const dailyVisitors = Math.floor(Math.random() * 1000) + 500
-    const weeklyVisitors = Math.floor(Math.random() * 5000) + 2000
-    const monthlyVisitors = Math.floor(Math.random() * 20000) + 10000
+    // Real visitor data based on user activity
+    const now = new Date()
+    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000)
+    const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+    const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+
+    const [
+      dailyVisitors,
+      weeklyVisitors,
+      monthlyVisitors
+    ] = await Promise.all([
+      // Daily visitors: users who logged in or had activity in the last 24 hours
+      prisma.user.count({
+        where: {
+          OR: [
+            { updatedAt: { gte: oneDayAgo } },
+            { sessions: { some: { expires: { gte: now } } } }
+          ]
+        }
+      }),
+      // Weekly visitors: users who logged in or had activity in the last 7 days
+      prisma.user.count({
+        where: {
+          OR: [
+            { updatedAt: { gte: oneWeekAgo } },
+            { sessions: { some: { expires: { gte: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000) } } } }
+          ]
+        }
+      }),
+      // Monthly visitors: users who logged in or had activity in the last 30 days
+      prisma.user.count({
+        where: {
+          OR: [
+            { updatedAt: { gte: oneMonthAgo } },
+            { sessions: { some: { expires: { gte: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000) } } } }
+          ]
+        }
+      })
+    ])
 
     const stats = {
       totalProjects,
