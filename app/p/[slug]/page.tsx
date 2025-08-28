@@ -33,7 +33,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
     'figma': 'Figma',
     'slack': 'Slack',
     'nimvue': 'Nimvue',
-    'cicero': 'Cicero'
+    'cicero': 'Cicero',
+    'fuckit-email-with-attitude': '[@fuck.it] - Email with Attitude',
+    'averi-ai': 'Averi AI'
   }
 
   if (slugToNameMap[slug.toLowerCase()]) {
@@ -66,7 +68,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
       },
       comments: {
         where: {
-          parentId: null // Only get top-level comments
+          parentId: null, // Only get top-level comments
+          status: 'active' // Only show active comments
         },
         include: {
           user: {
@@ -78,6 +81,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
             }
           },
           replies: {
+            where: {
+              status: 'active' // Only show active replies
+            },
             include: {
               user: {
                 select: {
@@ -88,6 +94,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 }
               },
               replies: {
+                where: {
+                  status: 'active' // Only show active replies
+                },
                 include: {
                   user: {
                     select: {
@@ -98,6 +107,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
                     }
                   },
                   replies: {
+                    where: {
+                      status: 'active' // Only show active replies
+                    },
                     include: {
                       user: {
                         select: {
@@ -107,8 +119,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
                           image: true
                         }
                       },
-                      replies: {
-                        include: {
+                                              replies: {
+                          where: {
+                            status: 'active' // Only show active replies
+                          },
+                          include: {
                           user: {
                             select: {
                               id: true,
@@ -118,6 +133,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
                             }
                           },
                           replies: {
+                            where: {
+                              status: 'active' // Only show active replies
+                            },
                             include: {
                               user: {
                                 select: {
@@ -191,7 +209,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
         },
         comments: {
           where: {
-            parentId: null // Only get top-level comments
+            parentId: null, // Only get top-level comments
+            status: 'active' // Only show active comments
           },
           include: {
             user: {
@@ -203,6 +222,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
               }
             },
             replies: {
+              where: {
+                status: 'active' // Only show active replies
+              },
               include: {
                 user: {
                   select: {

@@ -1,0 +1,46 @@
+console.log('🔐 Admin Access Instructions\n')
+
+console.log('❌ Current Issue:')
+console.log('   You are logged in as: 11@1.com (normal user)')
+console.log('   Admin dashboard requires: alexszabo89@icloud.com (admin user)')
+console.log('')
+
+console.log('✅ Solution Steps:')
+console.log('')
+
+console.log('1. 🚪 LOGOUT from current user:')
+console.log('   - Go to: http://localhost:3000')
+console.log('   - Click on your profile avatar (top right)')
+console.log('   - Click "Sign out" or "Logout"')
+console.log('   - OR go directly to: http://localhost:3000/api/auth/signout')
+console.log('')
+
+console.log('2. 🔑 LOGIN as admin:')
+console.log('   - Go to: http://localhost:3000/auth/signin')
+console.log('   - Email: alexszabo89@icloud.com')
+console.log('   - Password: Sofia2022@@')
+console.log('   - Click "Sign in"')
+console.log('')
+
+console.log('3. 🎯 ACCESS admin dashboard:')
+console.log('   - Go to: http://localhost:3000/admin')
+console.log('   - You should now see the admin dashboard with all data')
+console.log('')
+
+console.log('📊 Expected Admin Dashboard Data:')
+console.log('   - 9 Products (including your new "sadasdas" product)')
+console.log('   - 10 Comments (including your jailed "wtf..." comment)')
+console.log('   - 3 Boost Sales')
+console.log('   - 7 Users')
+console.log('')
+
+console.log('🔍 Alternative: Check current session')
+console.log('   - Visit: http://localhost:3000/api/auth/session')
+console.log('   - This will show your current login status')
+console.log('')
+
+console.log('💡 Quick Test:')
+console.log('   - After logging in as admin, try:')
+console.log('   - http://localhost:3000/admin (should work)')
+console.log('   - http://localhost:3000/api/admin/projects (should return data)')
+console.log('   - http://localhost:3000/api/admin/comments (should return data)')

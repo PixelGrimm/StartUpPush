@@ -424,9 +424,9 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
         </div>
 
         {/* Screenshots/Features */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold text-foreground mb-4">Project Screenshots</h2>
-          {product.screenshots && Array.isArray(product.screenshots) && product.screenshots.length > 0 ? (
+        {product.screenshots && product.screenshots.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold text-foreground mb-4">Project Screenshots</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {product.screenshots.map((screenshot: string, index: number) => (
                 <div key={index} className="bg-card border border-border rounded-lg overflow-hidden">
@@ -434,17 +434,24 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
                     src={screenshot}
                     alt={`${product.name} screenshot ${index + 1}`}
                     className="w-full h-64 object-cover"
+                    onError={(e) => {
+                      // Fallback if image fails to load
+                      const target = e.target as HTMLImageElement
+                      target.style.display = 'none'
+                      target.parentElement!.innerHTML = `
+                        <div class="w-full h-64 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                          <div class="text-center">
+                            <p class="text-gray-500 dark:text-gray-400 text-sm">Screenshot ${index + 1}</p>
+                          </div>
+                        </div>
+                      `
+                    }}
                   />
-
                 </div>
               ))}
             </div>
-          ) : (
-            <div className="bg-muted rounded-lg p-6 text-center">
-              <p className="text-muted-foreground">No screenshots available for this project.</p>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Project Updates */}
         <div className="mb-8">

@@ -1,0 +1,60 @@
+console.log('🔐 ADMIN LOGIN HELPER\n')
+
+console.log('❌ CURRENT ISSUE:')
+console.log('You are NOT logged in at all (Middleware shows "Token: none")')
+console.log('This is why the admin APIs return "Unauthorized"')
+console.log('')
+
+console.log('✅ SOLUTION:')
+console.log('Follow these steps EXACTLY:')
+console.log('')
+
+console.log('1️⃣ STEP 1: LOGOUT (if you think you are logged in)')
+console.log('   Go to: http://localhost:3000/api/auth/signout')
+console.log('   This will clear any existing session')
+console.log('')
+
+console.log('2️⃣ STEP 2: LOGIN AS ADMIN')
+console.log('   Go to: http://localhost:3000/auth/signin')
+console.log('   Email: alexszabo89@icloud.com')
+console.log('   Password: Sofia2022@@')
+console.log('   Click "Sign In"')
+console.log('')
+
+console.log('3️⃣ STEP 3: VERIFY LOGIN')
+console.log('   After login, you should be redirected to the home page')
+console.log('   Check that you see your name in the header (not "Login" button)')
+console.log('')
+
+console.log('4️⃣ STEP 4: ACCESS ADMIN DASHBOARD')
+console.log('   Go to: http://localhost:3000/admin')
+console.log('   You should see the admin dashboard with data')
+console.log('')
+
+console.log('🔍 TROUBLESHOOTING:')
+console.log('')
+
+console.log('If login fails:')
+console.log('- Make sure the dev server is running')
+console.log('- Check that the database has the admin user')
+console.log('- Try clearing browser cache and cookies')
+console.log('')
+
+console.log('If admin page shows no data:')
+console.log('- Check browser console for errors')
+console.log('- Verify you are logged in as admin')
+console.log('- Check network tab for API calls')
+console.log('')
+
+console.log('📊 EXPECTED RESULTS:')
+console.log('- Admin dashboard loads without errors')
+console.log('- All 4 tabs show data')
+console.log('- Projects tab: 9 projects')
+console.log('- Comments tab: 10 comments')
+console.log('- Boost Sales tab: 3 boost sales')
+console.log('')
+
+console.log('🚀 QUICK COMMANDS:')
+console.log('1. Logout: http://localhost:3000/api/auth/signout')
+console.log('2. Login: http://localhost:3000/auth/signin')
+console.log('3. Admin: http://localhost:3000/admin')

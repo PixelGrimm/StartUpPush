@@ -1,7 +1,7 @@
 import { prisma } from './prisma'
 
 export interface CreateNotificationParams {
-  type: 'comment' | 'reply' | 'vote' | 'update'
+  type: 'comment' | 'reply' | 'vote' | 'update' | 'PROJECT_APPROVED' | 'PROJECT_JAILED' | 'PROJECT_DELETED' | 'COMMENT_APPROVED' | 'COMMENT_JAILED' | 'COMMENT_DELETED'
   userId: string
   productId?: string
   commentId?: string
@@ -170,6 +170,25 @@ export class NotificationService {
       fromUserId,
       title: 'New project update',
       message: `${userName} posted an update for "${product.name}"`,
+    })
+  }
+
+  // Convenience method for creating admin action notifications
+  static async createAdminActionNotification(
+    userId: string,
+    type: 'PROJECT_APPROVED' | 'PROJECT_JAILED' | 'PROJECT_DELETED' | 'COMMENT_APPROVED' | 'COMMENT_JAILED' | 'COMMENT_DELETED',
+    title: string,
+    message: string,
+    productId?: string,
+    commentId?: string
+  ) {
+    return this.createNotification({
+      type,
+      userId,
+      productId,
+      commentId,
+      title,
+      message,
     })
   }
 }

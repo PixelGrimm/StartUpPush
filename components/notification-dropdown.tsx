@@ -13,10 +13,12 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
+import { JailedContentModal } from './jailed-content-modal'
+import { useNotificationStore } from '@/lib/notification-store'
 
 interface Notification {
   id: string
-  type: 'comment' | 'reply' | 'vote' | 'update'
+  type: 'comment' | 'reply' | 'vote' | 'update' | 'PROJECT_APPROVED' | 'PROJECT_JAILED' | 'PROJECT_DELETED' | 'COMMENT_APPROVED' | 'COMMENT_JAILED' | 'COMMENT_DELETED'
   title: string
   message: string
   isRead: boolean
@@ -36,10 +38,19 @@ interface Notification {
 
 export function NotificationDropdown() {
   const { data: session } = useSession()
-  const [notifications, setNotifications] = useState<Notification[]>([])
-  const [unreadCount, setUnreadCount] = useState(0)
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [modalNotification, setModalNotification] = useState<Notification | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  
+  const { 
+    notifications, 
+    unreadCount, 
+    setNotifications, 
+    setUnreadCount, 
+    markAsRead, 
+    markAllAsRead 
+  } = useNotificationStore()
 
   const fetchNotifications = async () => {
     if (!session?.user) return
@@ -62,54 +73,17 @@ export function NotificationDropdown() {
   useEffect(() => {
     fetchNotifications()
     
-    // Poll for new notifications every 30 seconds
-    const interval = setInterval(fetchNotifications, 30000)
+    // Poll for new notifications every 5 seconds for real-time updates
+    const interval = setInterval(fetchNotifications, 5000)
     return () => clearInterval(interval)
   }, [session?.user])
 
-  const markAsRead = async (notificationIds: string[]) => {
-    try {
-      const response = await fetch('/api/notifications', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ notificationIds }),
-      })
-
-      if (response.ok) {
-        // Update local state
-        setNotifications(prev => 
-          prev.map(notification => 
-            notificationIds.includes(notification.id) 
-              ? { ...notification, isRead: true }
-              : notification
-          )
-        )
-        setUnreadCount(prev => Math.max(0, prev - notificationIds.length))
-      }
-    } catch (error) {
-      console.error('Error marking notifications as read:', error)
-    }
+  const markAsReadHandler = (notificationIds: string[]) => {
+    markAsRead(notificationIds)
   }
 
-  const markAllAsRead = async () => {
-    try {
-      const response = await fetch('/api/notifications', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ markAllAsRead: true }),
-      })
-
-      if (response.ok) {
-        setNotifications(prev => prev.map(notification => ({ ...notification, isRead: true })))
-        setUnreadCount(0)
-      }
-    } catch (error) {
-      console.error('Error marking all notifications as read:', error)
-    }
+  const markAllAsReadHandler = () => {
+    markAllAsRead()
   }
 
   const getNotificationIcon = (type: string) => {
@@ -122,6 +96,18 @@ export function NotificationDropdown() {
         return <ThumbsUp className="h-4 w-4" />
       case 'update':
         return <Calendar className="h-4 w-4" />
+      case 'PROJECT_APPROVED':
+        return <Check className="h-4 w-4 text-green-500" />
+      case 'PROJECT_JAILED':
+        return <ThumbsDown className="h-4 w-4 text-orange-500" />
+      case 'PROJECT_DELETED':
+        return <ThumbsDown className="h-4 w-4 text-red-500" />
+      case 'COMMENT_APPROVED':
+        return <Check className="h-4 w-4 text-green-500" />
+      case 'COMMENT_JAILED':
+        return <ThumbsDown className="h-4 w-4 text-orange-500" />
+      case 'COMMENT_DELETED':
+        return <ThumbsDown className="h-4 w-4 text-red-500" />
       default:
         return <Bell className="h-4 w-4" />
     }
@@ -162,7 +148,7 @@ export function NotificationDropdown() {
             <Button 
               variant="ghost" 
               size="sm" 
-              onClick={markAllAsRead}
+              onClick={markAllAsReadHandler}
               className="text-xs"
             >
               Mark all read
@@ -186,10 +172,18 @@ export function NotificationDropdown() {
                 className={`p-3 cursor-pointer ${!notification.isRead ? 'bg-muted/50' : ''}`}
                 onClick={() => {
                   if (!notification.isRead) {
-                    markAsRead([notification.id])
+                    markAsReadHandler([notification.id])
                   }
-                  if (notification.product) {
-                    // Navigate to the project page
+                  
+                  // Check if this is an admin notification that should show modal
+                  const isAdminNotification = notification.type.includes('PROJECT_') || notification.type.includes('COMMENT_')
+                  
+                  if (isAdminNotification) {
+                    setModalNotification(notification)
+                    setIsModalOpen(true)
+                    setIsOpen(false) // Close dropdown
+                  } else if (notification.product) {
+                    // Navigate to the project page for regular notifications
                     window.location.href = `/p/${notification.product.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}`
                   }
                 }}
@@ -247,6 +241,16 @@ export function NotificationDropdown() {
           </>
         )}
       </DropdownMenuContent>
+      
+      {/* Jailed Content Modal */}
+      <JailedContentModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false)
+          setModalNotification(null)
+        }}
+        notification={modalNotification || undefined}
+      />
     </DropdownMenu>
   )
 }

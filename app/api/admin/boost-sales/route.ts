@@ -8,7 +8,9 @@ export async function GET(request: NextRequest) {
     const session = await getServerSession(authOptions)
     
     // Check if user is admin
-    if (session?.user?.email !== 'alexszabo89@icloud.com') {
+    const adminEmails = ['alexszabo89@icloud.com', 'admin@startuppush.com']
+    if (!session?.user?.email || !adminEmails.includes(session.user.email)) {
+      console.log('Admin API - Unauthorized access attempt:', session?.user?.email)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -49,11 +51,11 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    // Transform data to include amount
+    // Transform data to include amount with correct discounted pricing
     const salesWithAmount = sales.map(sale => ({
       id: sale.id,
       type: sale.type,
-      amount: sale.type === 'boosted' ? 50 : 100,
+      amount: sale.type === 'boosted' ? 15 : 35,  // Discounted prices: $15 for boosted, $35 for max-boosted
       createdAt: sale.createdAt,
       product: sale.product,
       user: sale.product.user

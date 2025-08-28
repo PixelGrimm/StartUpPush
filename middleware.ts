@@ -25,6 +25,17 @@ export default withAuth(
         return NextResponse.next()
       }
       
+      // Check admin access for admin pages
+      if (pathname.startsWith('/admin')) {
+        const adminEmails = ['alexszabo89@icloud.com', 'admin@startuppush.com']
+        if (!adminEmails.includes(token.email)) {
+          console.log('Middleware - Non-admin user trying to access admin page, redirecting to home')
+          return NextResponse.redirect(new URL('/', req.url))
+        }
+        console.log('Middleware - Admin access granted')
+        return NextResponse.next()
+      }
+      
       // For other pages, we'll let the page handle password checks
       console.log('Middleware - Profile complete, allowing access')
       return NextResponse.next()

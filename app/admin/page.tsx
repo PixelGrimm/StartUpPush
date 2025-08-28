@@ -21,7 +21,9 @@ import {
   XCircle,
   Calendar,
   Filter,
-  Trash2
+  Trash2,
+  Search,
+  RefreshCw
 } from 'lucide-react'
 
 interface AdminStats {
@@ -100,39 +102,44 @@ export default function AdminPage() {
     start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     end: new Date().toISOString().split('T')[0]
   })
+  const [searchQuery, setSearchQuery] = useState('')
+  const [activeTab, setActiveTab] = useState('projects')
 
   // Check admin authentication
   useEffect(() => {
     if (session?.user?.email === 'alexszabo89@icloud.com') {
       setIsAuthenticated(true)
       fetchAdminData()
+    } else if (session?.user?.email) {
+      // User is logged in but not admin - redirect to home
+      router.push('/')
     }
-  }, [session])
+  }, [session, router])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoginError('')
 
-    if (email === 'alexszabo89@icloud.com' && password === 'Sofia2022@@') {
-      setIsAuthenticated(true)
-      fetchAdminData()
-    } else {
-      setLoginError('Invalid credentials')
-    }
+    // Redirect to NextAuth login instead of client-side auth
+    window.location.href = '/auth/signin?callbackUrl=/admin'
   }
 
   const fetchAdminData = async () => {
     setLoading(true)
     try {
       // Fetch stats
-      const statsResponse = await fetch('/api/admin/stats')
+      const statsResponse = await fetch('/api/admin/stats', {
+        credentials: 'include'
+      })
       if (statsResponse.ok) {
         const statsData = await statsResponse.json()
         setStats(statsData)
       }
 
       // Fetch projects
-      const projectsResponse = await fetch('/api/admin/projects')
+      const projectsResponse = await fetch('/api/admin/projects', {
+        credentials: 'include'
+      })
       if (projectsResponse.ok) {
         const projectsData = await projectsResponse.json()
         setProjects(projectsData.projects)
@@ -140,7 +147,9 @@ export default function AdminPage() {
       }
 
       // Fetch comments
-      const commentsResponse = await fetch('/api/admin/comments')
+      const commentsResponse = await fetch('/api/admin/comments', {
+        credentials: 'include'
+      })
       if (commentsResponse.ok) {
         const commentsData = await commentsResponse.json()
         console.log('Admin page: Comments data received:', commentsData)
@@ -151,7 +160,9 @@ export default function AdminPage() {
       }
 
       // Fetch boost sales
-      const boostResponse = await fetch('/api/admin/boost-sales')
+      const boostResponse = await fetch('/api/admin/boost-sales', {
+        credentials: 'include'
+      })
       if (boostResponse.ok) {
         const boostData = await boostResponse.json()
         setBoostSales(boostData.sales)
@@ -168,11 +179,12 @@ export default function AdminPage() {
       const response = await fetch(`/api/admin/projects/${projectId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ action })
       })
 
       if (response.ok) {
-        fetchAdminData() // Refresh data
+        fetchAdminData() // Refresh data - this will preserve the active tab
       }
     } catch (error) {
       console.error('Error updating project:', error)
@@ -184,11 +196,12 @@ export default function AdminPage() {
       const response = await fetch(`/api/admin/comments/${commentId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ action })
       })
 
       if (response.ok) {
-        fetchAdminData() // Refresh data
+        fetchAdminData() // Refresh data - this will preserve the active tab
       }
     } catch (error) {
       console.error('Error updating comment:', error)
@@ -199,13 +212,14 @@ export default function AdminPage() {
     try {
       const response = await fetch('/api/admin/cleanup-comments', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include'
       })
 
       if (response.ok) {
         const result = await response.json()
         alert(`Successfully deleted ${result.deleted} test comments!`)
-        // Refresh data
+        // Refresh data - this will preserve the active tab
         fetchAdminData()
       } else {
         alert('Failed to cleanup comments')
@@ -220,42 +234,44 @@ export default function AdminPage() {
     fetchAdminData()
   }
 
+  // Filter functions
+  const filteredProjects = projects.filter(project => 
+    searchQuery === '' || 
+    project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    project.tagline.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    project.user.name.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+  const filteredComments = comments.filter(comment => 
+    searchQuery === '' || 
+    comment.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    comment.user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    comment.product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+  const filteredBoostSales = boostSales.filter(sale => 
+    searchQuery === '' || 
+    sale.product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    sale.user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    sale.type.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle className="text-center">Admin Login</CardTitle>
+            <CardTitle className="text-center">Admin Access Required</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div>
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
-              {loginError && (
-                <p className="text-red-500 text-sm">{loginError}</p>
-              )}
-              <Button type="submit" className="w-full">
-                Login
+            <div className="space-y-4">
+              <p className="text-center text-muted-foreground">
+                You need to be logged in as an admin to access this page.
+              </p>
+              <Button onClick={handleLogin} className="w-full">
+                Login as Admin
               </Button>
-            </form>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -281,9 +297,19 @@ export default function AdminPage() {
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Manage projects, comments, and boost sales</p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground mb-2">Admin Dashboard</h1>
+            <p className="text-muted-foreground">Manage projects, comments, and boost sales</p>
+          </div>
+          <Button 
+            onClick={fetchAdminData} 
+            disabled={loading}
+            variant="outline"
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
         </div>
 
         {/* Date Range Filter */}
@@ -411,7 +437,7 @@ export default function AdminPage() {
         )}
 
         {/* Main Tabs */}
-        <Tabs defaultValue="projects" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList>
             <TabsTrigger value="projects">Projects</TabsTrigger>
             <TabsTrigger value="comments">Comments</TabsTrigger>
@@ -440,22 +466,26 @@ export default function AdminPage() {
                         </p>
                       </div>
                       <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant={project.status === 'active' ? 'default' : 'outline'}
-                          onClick={() => handleProjectAction(project.id, 'approve')}
-                        >
-                          <CheckCircle className="h-4 w-4 mr-1" />
-                          Approve
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => handleProjectAction(project.id, 'jail')}
-                        >
-                          <Shield className="h-4 w-4 mr-1" />
-                          Jail
-                        </Button>
+                        {project.status === 'jailed' && (
+                          <Button
+                            size="sm"
+                            variant="default"
+                            onClick={() => handleProjectAction(project.id, 'approve')}
+                          >
+                            <CheckCircle className="h-4 w-4 mr-1" />
+                            Approve
+                          </Button>
+                        )}
+                        {project.status === 'active' && (
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => handleProjectAction(project.id, 'jail')}
+                          >
+                            <Shield className="h-4 w-4 mr-1" />
+                            Jail
+                          </Button>
+                        )}
                         <Button
                           size="sm"
                           variant="destructive"
@@ -499,22 +529,26 @@ export default function AdminPage() {
                         </p>
                       </div>
                       <div className="flex gap-2 ml-4">
-                        <Button
-                          size="sm"
-                          variant={comment.status === 'active' ? 'default' : 'outline'}
-                          onClick={() => handleCommentAction(comment.id, 'approve')}
-                        >
-                          <CheckCircle className="h-4 w-4 mr-1" />
-                          Approve
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => handleCommentAction(comment.id, 'jail')}
-                        >
-                          <Shield className="h-4 w-4 mr-1" />
-                          Jail
-                        </Button>
+                        {comment.status === 'jailed' && (
+                          <Button
+                            size="sm"
+                            variant="default"
+                            onClick={() => handleCommentAction(comment.id, 'approve')}
+                          >
+                            <CheckCircle className="h-4 w-4 mr-1" />
+                            Approve
+                          </Button>
+                        )}
+                        {comment.status === 'active' && (
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => handleCommentAction(comment.id, 'jail')}
+                          >
+                            <Shield className="h-4 w-4 mr-1" />
+                            Jail
+                          </Button>
+                        )}
                         <Button
                           size="sm"
                           variant="destructive"
@@ -570,11 +604,11 @@ export default function AdminPage() {
               <CardContent>
                 <div className="space-y-4">
                   {jailedProjects.map((project) => (
-                    <div key={project.id} className="flex items-center justify-between p-4 border rounded-lg bg-orange-50">
+                    <div key={project.id} className="flex items-center justify-between p-4 border rounded-lg bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800">
                       <div className="flex-1">
-                        <h3 className="font-semibold">{project.name}</h3>
-                        <p className="text-sm text-muted-foreground">{project.tagline}</p>
-                        <p className="text-xs text-muted-foreground">
+                        <h3 className="font-semibold text-gray-900 dark:text-gray-100">{project.name}</h3>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">{project.tagline}</p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">
                           By {project.user.name} • {project.category} • {new Date(project.createdAt).toLocaleDateString()}
                         </p>
                       </div>
@@ -612,10 +646,10 @@ export default function AdminPage() {
               <CardContent>
                 <div className="space-y-4">
                   {jailedComments.map((comment) => (
-                    <div key={comment.id} className="flex items-start justify-between p-4 border rounded-lg bg-orange-50">
+                    <div key={comment.id} className="flex items-start justify-between p-4 border rounded-lg bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800">
                       <div className="flex-1">
-                        <p className="text-sm">{comment.content}</p>
-                        <p className="text-xs text-muted-foreground mt-1">
+                        <p className="text-sm text-gray-900 dark:text-gray-100">{comment.content}</p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                           By {comment.user.name} • On {comment.product.name} • {new Date(comment.createdAt).toLocaleDateString()}
                         </p>
                       </div>

@@ -5,6 +5,7 @@ import { Providers } from '@/components/providers'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { Sidebar } from '@/components/sidebar'
+import { RealTimeNotifications } from '@/components/real-time-notifications'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
@@ -49,6 +50,7 @@ export default async function RootLayout({
       </head>
       <body className={inter.className}>
         <Providers>
+          <RealTimeNotifications />
           <div className="min-h-screen bg-background">
             <Header />
             <div className="flex">

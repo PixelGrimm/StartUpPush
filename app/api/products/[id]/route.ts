@@ -56,6 +56,11 @@ export async function GET(
       return NextResponse.json({ error: 'Product not found' }, { status: 404 })
     }
 
+    // Check if product is jailed - only allow access to active products
+    if (product.status !== 'active') {
+      return NextResponse.json({ error: 'Product not available' }, { status: 404 })
+    }
+
     // Calculate vote statistics
     const upvotes = product.votes.filter(vote => vote.value === 1).length
     const downvotes = product.votes.filter(vote => vote.value === -1).length

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { shouldAutoJail, getBadWordsInContent } from '@/lib/bad-words'
 
 export async function POST(request: NextRequest) {
   try {
@@ -81,6 +82,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'A product with this name already exists' }, { status: 400 })
     }
 
+    // Check for bad words in content
+    const contentToCheck = `${name} ${tagline} ${description}`.toLowerCase()
+    const hasBadWords = shouldAutoJail(contentToCheck)
+    const badWordsFound = hasBadWords ? getBadWordsInContent(contentToCheck) : []
+    
+    // Determine initial status based on content
+    const initialStatus = hasBadWords ? 'jailed' : 'active'
+
     // Process uploaded files
     let logoUrl = 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=64&h=64&fit=crop' // Default placeholder
     let screenshotUrls = ['https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=600&fit=crop'] // Default placeholder
@@ -133,8 +142,22 @@ export async function POST(request: NextRequest) {
         mrr: mrrValue,
         userId: session.user.id,
         isPromoted: false,
+        status: initialStatus, // Set status based on content check
       },
     })
+
+    // If product was jailed due to bad words, create a notification for the user
+    if (hasBadWords) {
+      await prisma.notification.create({
+        data: {
+          userId: session.user.id,
+          type: 'PROJECT_JAILED',
+          title: 'Project Under Review',
+          message: `Your project "${name}" has been flagged for review due to inappropriate content. It will be reviewed by our team.`,
+          isRead: false,
+        }
+      })
+    }
 
     // Add automatic upvote from the creator
     await prisma.vote.create({
@@ -158,7 +181,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ 
       success: true, 
       product,
-      message: 'Product submitted successfully with automatic upvote!' 
+      message: hasBadWords 
+        ? `Product submitted but flagged for review due to inappropriate content. You will be notified when it's reviewed.` 
+        : 'Product submitted successfully with automatic upvote!',
+      jailed: hasBadWords,
+      badWordsFound: badWordsFound
     })
 
   } catch (error) {

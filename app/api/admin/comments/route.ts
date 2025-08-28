@@ -8,7 +8,9 @@ export async function GET(request: NextRequest) {
     const session = await getServerSession(authOptions)
     
     // Check if user is admin
-    if (session?.user?.email !== 'alexszabo89@icloud.com') {
+    const adminEmails = ['alexszabo89@icloud.com', 'admin@startuppush.com']
+    if (!session?.user?.email || !adminEmails.includes(session.user.email)) {
+      console.log('Admin API - Unauthorized access attempt:', session?.user?.email)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

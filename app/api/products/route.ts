@@ -31,7 +31,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Build where clause for filtering
-    const whereClause: any = { isActive: true }
+    const whereClause: any = { 
+      isActive: true,
+      status: 'active' // Only show active products, exclude jailed ones
+    }
     
     if (category) {
       whereClause.category = category
@@ -180,7 +183,7 @@ export async function GET(request: NextRequest) {
       totalProducts: sortedProducts.length
     })
 
-    // Show all products in each section (allow duplicates)
+    // Separate products into different sections (no duplicates)
     const todaysProducts = sortedProducts.slice(0, 3)
 
     console.log('📊 Product distribution:', {
@@ -199,13 +202,19 @@ export async function GET(request: NextRequest) {
       .filter(p => p.isPromoted)
       .slice(0, 3)
 
+    // Create sets of product IDs to prevent duplicates
+    const todaysTopIds = new Set(todaysProducts.map(p => p.id))
+    const yesterdaysTopIds = new Set(yesterdaysProducts.map(p => p.id))
+    const weeklyTopIds = new Set(weeklyProducts.map(p => p.id))
+    const monthlyTopIds = new Set(monthlyProducts.map(p => p.id))
+
     const result = {
       todaysTop: todaysProducts.filter(p => !p.isPromoted).slice(0, 3),
-      todaysPromoted: promotedProducts.slice(0, 1), // Only show 1 promoted in today's
+      todaysPromoted: promotedProducts.filter(p => !todaysTopIds.has(p.id)).slice(0, 1), // Only show 1 promoted in today's, no duplicates
       yesterdaysTop: yesterdaysProducts.filter(p => !p.isPromoted).slice(0, 3),
-      yesterdaysPromoted: promotedProducts.slice(1, 2), // Show different promoted
+      yesterdaysPromoted: promotedProducts.filter(p => !yesterdaysTopIds.has(p.id) && !todaysTopIds.has(p.id)).slice(0, 1), // Show different promoted
       weeklyTop: weeklyProducts.filter(p => !p.isPromoted).slice(0, 3),
-      weeklyPromoted: promotedProducts.slice(2, 3), // Show different promoted
+      weeklyPromoted: promotedProducts.filter(p => !weeklyTopIds.has(p.id) && !yesterdaysTopIds.has(p.id) && !todaysTopIds.has(p.id)).slice(0, 1), // Show different promoted
       monthlyTop: monthlyProducts.filter(p => !p.isPromoted).slice(0, 3),
       monthlyPromoted: [], // No promoted in monthly to avoid duplicates
       featuredProducts: getFeaturedProducts(),

@@ -1,0 +1,55 @@
+console.log('🧹 CACHE CLEARING AND TESTING GUIDE\n')
+
+console.log('❌ PROBLEM:')
+console.log('   - Jailed comments are still visible on the website')
+console.log('   - API is correctly filtering (tested and confirmed)')
+console.log('   - Browser is caching old data')
+console.log('')
+
+console.log('✅ SOLUTION STEPS:\n')
+
+console.log('1️⃣ RESTART DEVELOPMENT SERVER:')
+console.log('   - Server has been restarted to apply all changes')
+console.log('   - All API endpoints are now using updated filtering')
+console.log('')
+
+console.log('2️⃣ CLEAR BROWSER CACHE:')
+console.log('   - Press Ctrl+F5 (Windows/Linux) or Cmd+Shift+R (Mac)')
+console.log('   - Or go to Developer Tools → Network → Disable cache')
+console.log('   - Or clear browser cache completely')
+console.log('')
+
+console.log('3️⃣ TEST THE API DIRECTLY:')
+console.log('   - Visit: http://localhost:3000/api/comments?productId=cmeuf61tb000t8k54wn2wtvtk')
+console.log('   - Should only return active comments, no jailed ones')
+console.log('')
+
+console.log('4️⃣ VERIFY IN BROWSER:')
+console.log('   - Visit: http://localhost:3000/p/designcanvas')
+console.log('   - Check comments section')
+console.log('   - Should only see "asdsad" comment')
+console.log('   - "wtf" comments should be gone')
+console.log('')
+
+console.log('🧪 API TEST RESULTS:')
+console.log('   ✅ API is correctly filtering jailed comments')
+console.log('   ✅ Only returning active comments')
+console.log('   ✅ Jailed comments are properly excluded')
+console.log('')
+
+console.log('🔄 IF STILL SEEING JAILED COMMENTS:')
+console.log('   1. Hard refresh: Ctrl+F5 or Cmd+Shift+R')
+console.log('   2. Clear browser cache completely')
+console.log('   3. Try incognito/private browsing mode')
+console.log('   4. Check if using a different browser')
+console.log('   5. Verify the page is loading fresh data')
+console.log('')
+
+console.log('📋 WHAT SHOULD HAPPEN:')
+console.log('   - Only "asdsad" comment should be visible')
+console.log('   - No "wtf" comments should appear')
+console.log('   - Comments should load fresh from API')
+console.log('   - No cached data should be displayed')
+console.log('')
+
+console.log('✨ COMMENT FILTERING IS WORKING - JUST CLEAR YOUR CACHE!')

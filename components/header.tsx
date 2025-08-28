@@ -151,6 +151,14 @@ export function Header() {
                 <DropdownMenuItem asChild>
                   <Link href="/submit">Submit Project</Link>
                 </DropdownMenuItem>
+                {/* Admin Dashboard - Only show for admin users */}
+                {(session.user as any)?.email === 'alexszabo89@icloud.com' && (
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin" className="text-purple-600 dark:text-purple-400 font-medium">
+                      🛡️ Admin Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => signOut()}>
                   Log out

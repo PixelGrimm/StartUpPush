@@ -146,6 +146,7 @@ async function main() {
     }
   ]
 
+  const createdProducts = []
   for (const productData of products) {
     const product = await prisma.product.create({
       data: {
@@ -157,6 +158,7 @@ async function main() {
         ])
       }
     })
+    createdProducts.push(product)
     console.log(`📦 Created product: ${product.name}`)
 
     // Add automatic upvote from creator
@@ -196,6 +198,110 @@ async function main() {
       create: postData
     })
     console.log(`📝 Created blog post: ${postData.title}`)
+  }
+
+  // Create some test comments
+  const comments = [
+    {
+      content: 'This looks really promising! I love the UI design.',
+      userId: users[1].id,
+      productId: createdProducts[0].id
+    },
+    {
+      content: 'Great tool! Been using it for a month now.',
+      userId: users[2].id,
+      productId: createdProducts[0].id
+    },
+    {
+      content: 'The pricing seems a bit high for what it offers.',
+      userId: users[3].id,
+      productId: createdProducts[1].id
+    },
+    {
+      content: 'wtf is this?',
+      userId: users[0].id,
+      productId: createdProducts[1].id
+    },
+    {
+      content: 'test comment',
+      userId: users[0].id,
+      productId: createdProducts[2].id
+    },
+    {
+      content: 'hi there',
+      userId: users[0].id,
+      productId: createdProducts[2].id
+    },
+    {
+      content: 'This is exactly what I was looking for!',
+      userId: users[1].id,
+      productId: createdProducts[3].id
+    },
+    {
+      content: 'The integration with other tools is seamless.',
+      userId: users[2].id,
+      productId: createdProducts[4].id
+    }
+  ]
+
+  for (const commentData of comments) {
+    await prisma.comment.create({
+      data: commentData
+    })
+    console.log(`💬 Created comment: ${commentData.content.substring(0, 30)}...`)
+  }
+
+  // Create some boost sales
+  const boostSales = [
+    {
+      productId: createdProducts[0].id,
+      type: 'boosted',
+      startDate: new Date(),
+      endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      isActive: true
+    },
+    {
+      productId: createdProducts[1].id,
+      type: 'max-boosted',
+      startDate: new Date(),
+      endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      isActive: true
+    },
+    {
+      productId: createdProducts[2].id,
+      type: 'boosted',
+      startDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      endDate: new Date(),
+      isActive: false
+    }
+  ]
+
+  for (const boostData of boostSales) {
+    await prisma.promotion.create({
+      data: boostData
+    })
+    console.log(`🚀 Created boost sale for product`)
+  }
+
+  // Add some votes
+  for (let i = 0; i < 20; i++) {
+    const randomUser = users[Math.floor(Math.random() * users.length)]
+    const randomProduct = createdProducts[Math.floor(Math.random() * createdProducts.length)]
+    
+    await prisma.vote.upsert({
+      where: {
+        userId_productId: {
+          userId: randomUser.id,
+          productId: randomProduct.id
+        }
+      },
+      update: {},
+      create: {
+        userId: randomUser.id,
+        productId: randomProduct.id,
+        value: Math.random() > 0.3 ? 1 : -1
+      }
+    })
   }
 
   console.log('✅ Database seeded successfully!')

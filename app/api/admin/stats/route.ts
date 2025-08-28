@@ -8,7 +8,9 @@ export async function GET(request: NextRequest) {
     const session = await getServerSession(authOptions)
     
     // Check if user is admin
-    if (session?.user?.email !== 'alexszabo89@icloud.com') {
+    const adminEmails = ['alexszabo89@icloud.com', 'admin@startuppush.com']
+    if (!session?.user?.email || !adminEmails.includes(session.user.email)) {
+      console.log('Admin API - Unauthorized access attempt:', session?.user?.email)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -41,13 +43,13 @@ export async function GET(request: NextRequest) {
       prisma.promotion.count({ 
         where: { 
           ...dateFilter,
-          type: 'boosted' 
+          type: 'free' 
         } 
       }),
       prisma.promotion.count({ 
         where: { 
           ...dateFilter,
-          type: 'max-boosted' 
+          type: { in: ['boosted', 'max-boosted'] }
         } 
       }),
       prisma.promotion.findMany({
@@ -61,10 +63,10 @@ export async function GET(request: NextRequest) {
       })
     ])
 
-    // Calculate total revenue
+    // Calculate total revenue with correct pricing
     const totalRevenue = boostSales.reduce((sum, sale) => {
-      if (sale.type === 'boosted') return sum + 50
-      if (sale.type === 'max-boosted') return sum + 100
+      if (sale.type === 'boosted') return sum + 15  // Discounted price: $15 (70% off from $50)
+      if (sale.type === 'max-boosted') return sum + 35  // Discounted price: $35 (80% off from $175)
       return sum
     }, 0)
 

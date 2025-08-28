@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { prisma } from '@/lib/prisma'
 import { authOptions } from '@/lib/auth'
 import { NotificationService } from '@/lib/notification-service'
+import { shouldAutoJail, getBadWordsInContent } from '@/lib/bad-words'
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,17 +23,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Content filtering - check for inappropriate content
-    const inappropriateWords = [
-      'wtf', 'fuck', 'shit', 'bitch', 'ass', 'damn', 'hell',
-      'crap', 'piss', 'dick', 'cock', 'pussy', 'bastard',
-      'motherfucker', 'fucker', 'shitty', 'fucking', 'fucked'
-    ]
-    
-    const contentLower = content.toLowerCase()
-    const hasInappropriateContent = inappropriateWords.some(word => 
-      contentLower.includes(word)
-    )
+    // Content filtering - check for inappropriate content using bad words utility
+    const hasInappropriateContent = shouldAutoJail(content)
+    const badWordsFound = hasInappropriateContent ? getBadWordsInContent(content) : []
     
     // Set status based on content
     const commentStatus = hasInappropriateContent ? 'jailed' : 'active'
@@ -125,6 +118,19 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // If comment was jailed due to bad words, create a notification for the user
+    if (hasInappropriateContent) {
+      await prisma.notification.create({
+        data: {
+          userId: user.id,
+          type: 'COMMENT_JAILED',
+          title: 'Comment Under Review',
+          message: `Your comment has been flagged for review due to inappropriate content. It will be reviewed by our team.`,
+          isRead: false,
+        }
+      })
+    }
+
     // Create notification for the product owner (for new comments)
     if (!parentId) {
       try {
@@ -155,7 +161,12 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      comment
+      comment,
+      jailed: hasInappropriateContent,
+      badWordsFound: badWordsFound,
+      message: hasInappropriateContent 
+        ? 'Comment submitted but flagged for review due to inappropriate content.' 
+        : 'Comment submitted successfully!'
     })
 
   } catch (error) {
@@ -195,6 +206,9 @@ export async function GET(request: NextRequest) {
           }
         },
         replies: {
+          where: {
+            status: 'active' // Only show active replies
+          },
           include: {
             user: {
               select: {
